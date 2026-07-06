@@ -1,0 +1,21 @@
+{
+  "name": "retail_orders",
+  "version": "1.1.0",
+  "fields": [
+    { "name": "order_id", "required": true, "description": "订单编号" },
+    { "name": "customer_id", "required": true, "description": "客户编号" },
+    {
+      "name": "status",
+      "required": true,
+      "allowed_values": ["paid", "shipped", "cancelled", "refunded"],
+      "description": "订单状态"
+    },
+    {
+      "name": "amount",
+      "kind": "int",
+      "required": true,
+      "description": "订单金额"
+    }
+  ],
+  "rules": []
+}

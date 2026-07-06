@@ -1,0 +1,3 @@
+{"order_id":"ORD-001","customer_id":"C001","status":"paid","amount":199,"discount":10}
+{"order_id":"ORD-001","customer_id":"","status":"hold","amount":0,"discount":5}
+{"order_id":"ORD-003","customer_id":"C003","status":"shipped","amount":5,"discount":10}

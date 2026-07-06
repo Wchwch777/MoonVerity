@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="MoonVerity logo">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0f2f5f"/>
+      <stop offset="100%" stop-color="#0c8b8f"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+  <path d="M194 88c-66 22-114 84-114 158 0 93 75 168 168 168 36 0 70-11 98-31-20 6-41 9-62 9-120 0-216-106-190-228 11-32 25-55 47-76 15-1 31-1 53 0z" fill="#d8f3ff"/>
+  <path d="M256 132l108 44v78c0 76-43 131-108 160-65-29-108-84-108-160v-78l108-44z" fill="#ffffff" fill-opacity="0.96"/>
+  <g fill="#0f7f84">
+    <rect x="204" y="214" width="32" height="32" rx="6"/>
+    <rect x="240" y="214" width="32" height="32" rx="6"/>
+    <rect x="276" y="214" width="32" height="32" rx="6"/>
+    <rect x="204" y="250" width="32" height="32" rx="6"/>
+    <rect x="240" y="250" width="32" height="32" rx="6"/>
+    <rect x="276" y="250" width="32" height="32" rx="6"/>
+  </g>
+  <path d="M224 316c17 15 47 15 64 0" fill="none" stroke="#0f2f5f" stroke-width="16" stroke-linecap="round"/>
+</svg>

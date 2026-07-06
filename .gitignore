@@ -1,0 +1,6 @@
+.worktrees/
+_build/
+.mooncakes/
+.DS_Store
+Thumbs.db
+docs/competition/MoonVerity-项目申报书.pdf

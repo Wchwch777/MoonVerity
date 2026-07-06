@@ -1,0 +1,64 @@
+{
+  "name": "retail_orders",
+  "version": "1.0.0",
+  "fields": [
+    { "name": "order_id", "required": true, "description": "订单编号" },
+    { "name": "customer_id", "required": true, "description": "客户编号" },
+    {
+      "name": "status",
+      "required": true,
+      "allowed_values": ["paid", "shipped", "cancelled"],
+      "description": "订单状态"
+    },
+    {
+      "name": "amount",
+      "kind": "int",
+      "required": true,
+      "description": "订单金额"
+    },
+    {
+      "name": "discount",
+      "kind": "int",
+      "required": false,
+      "description": "优惠金额"
+    }
+  ],
+  "rules": [
+    {
+      "kind": "unique",
+      "fields": ["order_id"],
+      "severity": "error",
+      "message": "order_id must be unique"
+    },
+    {
+      "kind": "completeness",
+      "field": "customer_id",
+      "min_percent": 80,
+      "severity": "error",
+      "message": "customer_id completeness too low"
+    },
+    {
+      "kind": "enum",
+      "field": "status",
+      "allowed_values": ["paid", "shipped", "cancelled"],
+      "severity": "error",
+      "message": "status must be allowed"
+    },
+    {
+      "kind": "int_range",
+      "field": "amount",
+      "min": 1,
+      "max": 10000,
+      "severity": "error",
+      "message": "amount out of range"
+    },
+    {
+      "kind": "compare_ints",
+      "left": "amount",
+      "op": ">=",
+      "right": "discount",
+      "severity": "warning",
+      "message": "amount should cover discount"
+    }
+  ]
+}

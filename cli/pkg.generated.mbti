@@ -1,0 +1,20 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Wchwch/moonverity/cli"
+
+// Values
+pub fn run_diff_contract_text(String, String) -> String
+
+pub fn run_profile_text(String, String) -> String
+
+pub fn run_validate_json(String, String, String) -> String
+
+pub fn run_validate_text(String, String, String) -> String
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

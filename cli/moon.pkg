@@ -1,0 +1,5 @@
+import {
+  "Wchwch/moonverity/core",
+  "Wchwch/moonverity/adapters",
+  "moonbitlang/core/json",
+}

@@ -1,0 +1,65 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Wchwch/moonverity"
+
+import {
+  "Wchwch/moonverity/core",
+}
+
+// Values
+pub fn diff_contracts(@core.Contract, @core.Contract) -> @core.ContractDiff
+
+pub fn field_spec(String, kind? : @core.FieldType, required? : Bool, nullable? : Bool, allowed_values? : Array[String], min_int? : Int, max_int? : Int, pattern? : String, description? : String) -> @core.FieldSpec
+
+pub fn parse_contract_json(String) -> @core.Contract
+
+pub fn parse_csv_text(String) -> Array[Map[String, String]]
+
+pub fn parse_jsonl_text(String) -> Array[Map[String, String]]
+
+pub fn profile_rows(Array[Map[String, String]]) -> @core.DatasetProfile
+
+pub fn read_csv_file(String) -> Array[Map[String, String]]
+
+pub fn read_jsonl_file(String) -> Array[Map[String, String]]
+
+pub fn row_of(Array[(String, String)]) -> Map[String, String]
+
+pub fn run_diff_contract_text(String, String) -> String
+
+pub fn run_profile_text(String, String) -> String
+
+pub fn run_validate_json(String, String, String) -> String
+
+pub fn run_validate_text(String, String, String) -> String
+
+pub fn validate_rows(@core.Contract, Array[Map[String, String]]) -> @core.ValidationReport
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+pub using @core {type ColumnProfile}
+
+pub using @core {type ComparisonOp}
+
+pub using @core {type Contract}
+
+pub using @core {type ContractDiff}
+
+pub using @core {type DatasetProfile}
+
+pub using @core {type FieldSpec}
+
+pub using @core {type FieldType}
+
+pub using @core {type Rule}
+
+pub using @core {type RuleResult}
+
+pub using @core {type Severity}
+
+pub using @core {type ValidationReport}
+
+// Traits
+
