@@ -1,0 +1,10 @@
+MoonVerity
+Copyright 2026 韦昌豪
+
+This project is distributed under the Apache License 2.0.
+
+Additional attribution notes:
+- The competition requirement summary in docs/competition/official-requirements.md
+  is derived from the public OSC2026 official repository and website.
+- The PDF export script uses the local SimHei system font only for rendering
+  Chinese text in the proposal artifact.
