@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import subprocess
 import sys
 from pathlib import Path
@@ -92,6 +93,10 @@ def check_readme_links() -> list[str]:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--skip-remote-sync", action="store_true")
+    args = parser.parse_args()
+
     issues: list[str] = []
 
     issues.extend(check_required_files())
@@ -99,12 +104,17 @@ def main() -> int:
     issues.extend(commit_issues)
     source_lines, line_issues = count_moonbit_lines()
     issues.extend(line_issues)
-    origin_head, origin_head_issues = check_default_branch("origin")
-    github_head, github_head_issues = check_default_branch("github")
-    issues.extend(origin_head_issues)
-    issues.extend(github_head_issues)
-    origin_hash, github_hash, sync_issues = check_remotes_sync()
-    issues.extend(sync_issues)
+    origin_head = "skipped"
+    github_head = "skipped"
+    origin_hash = "skipped"
+    github_hash = "skipped"
+    if not args.skip_remote_sync:
+        origin_head, origin_head_issues = check_default_branch("origin")
+        github_head, github_head_issues = check_default_branch("github")
+        issues.extend(origin_head_issues)
+        issues.extend(github_head_issues)
+        origin_hash, github_hash, sync_issues = check_remotes_sync()
+        issues.extend(sync_issues)
     issues.extend(check_readme_links())
 
     print(f"commit_count={commit_count}")
