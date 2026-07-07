@@ -17,6 +17,9 @@ jobs:
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
 
+      - name: Refresh registry
+        run: moon update
+
       - name: Verify toolchain
         run: moon --version
 
@@ -25,3 +28,6 @@ jobs:
 
       - name: Test
         run: moon test
+
+      - name: Verify repository compliance
+        run: python scripts/check_repo_compliance.py --skip-remote-sync
