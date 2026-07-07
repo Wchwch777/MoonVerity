@@ -48,11 +48,12 @@ def count_commits() -> tuple[int, list[str]]:
 
 def count_moonbit_lines() -> tuple[int, list[str]]:
     total = 0
-    for path in ROOT.rglob("*.mbt"):
+    tracked = run_git("ls-files", "*.mbt", "*.mbti").splitlines()
+    for rel in tracked:
+        path = ROOT / rel
+        if path.name == "pkg.generated.mbti":
+            continue
         total += len(path.read_text(encoding="utf-8").splitlines())
-    for path in ROOT.rglob("*.mbti"):
-        if path.name != "pkg.generated.mbti":
-            total += len(path.read_text(encoding="utf-8").splitlines())
     issues: list[str] = []
     if total < 500:
         issues.append(f"MoonBit source scale too small: {total} < 500 lines")
