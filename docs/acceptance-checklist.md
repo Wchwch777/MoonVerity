@@ -6,9 +6,9 @@
 - [x] 示例数据与契约已提供
 - [x] 核心测试覆盖契约解析、校验、适配器、CLI
 - [x] 命令行入口已提供
-- [ ] `moon publish --dry-run`
-- [ ] GitHub / GitLink 双远端同步
-- [ ] Mooncakes 发布
+- [x] `moon publish --dry-run`
+- [x] GitHub / GitLink 双远端同步
+- [x] Mooncakes 发布
 - [x] 一页 PDF 项目申报书导出
 
 ## 本地验证命令
