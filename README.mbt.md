@@ -36,7 +36,7 @@ moon run cmd/main diff-contract examples/retail-orders/contract.json examples/re
 ## 示例
 
 ```mbt nocheck
-import "Wchwch/moonverity"
+import "Wchwch777/moonverity"
 
 let contract = @moonverity.parse_contract_json(contract_text)
 let rows = @moonverity.parse_csv_text(csv_text)

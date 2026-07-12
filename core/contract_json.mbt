@@ -31,6 +31,7 @@ struct RuleConfig {
   left : String?
   op : String?
   right : String?
+  pattern : String?
   severity : String?
   message : String?
 } derive(FromJson, Debug)
@@ -107,6 +108,13 @@ fn rule_config_to_rule(config : RuleConfig) -> Rule {
         left=expect_string(config.left, "left"),
         op=parse_comparison_op(expect_string(config.op, "op")),
         right=expect_string(config.right, "right"),
+        severity~,
+        message~,
+      )
+    "pattern_match" =>
+      PatternMatch(
+        field=expect_string(config.field, "field"),
+        pattern=expect_string(config.pattern, "pattern"),
         severity~,
         message~,
       )

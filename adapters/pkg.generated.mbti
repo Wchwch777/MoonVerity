@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "Wchwch/moonverity/adapters"
+package "Wchwch777/moonverity/adapters"
 
 // Values
 pub fn parse_csv_text(String) -> Array[Map[String, String]]

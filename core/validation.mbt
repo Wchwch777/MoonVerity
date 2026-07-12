@@ -49,6 +49,8 @@ fn evaluate_rule(rule : Rule, rows : Array[DataRow]) -> Array[Int] {
       evaluate_int_range(field, min, max, rows)
     CompareInts(left~, op~, right~, ..) =>
       evaluate_compare_ints(left, op, right, rows)
+    PatternMatch(field~, pattern~, ..) =>
+      evaluate_pattern_match(field, pattern, rows)
     RowCount(min~, max~, ..) => evaluate_row_count(rows.length(), min, max)
   }
 }
@@ -166,5 +168,34 @@ fn evaluate_row_count(length : Int, min : Int?, max : Int?) -> Array[Int] {
     [0]
   } else {
     []
+  }
+}
+
+///|
+fn evaluate_pattern_match(
+  field : String,
+  pattern : String,
+  rows : Array[DataRow],
+) -> Array[Int] {
+  let failures = []
+  for index, row in rows {
+    let value = option_or_empty(row.get(field))
+    if value != "" && !match_pattern(value, pattern) {
+      failures.push(index)
+    }
+  }
+  failures
+}
+
+///|
+fn match_pattern(value : String, pattern : String) -> Bool {
+  if pattern.has_prefix("prefix:") {
+    value.has_prefix(pattern[7:])
+  } else if pattern.has_prefix("suffix:") {
+    value.has_suffix(pattern[7:])
+  } else if pattern.has_prefix("contains:") {
+    value.contains(pattern[9:])
+  } else {
+    value == pattern
   }
 }

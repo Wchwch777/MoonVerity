@@ -30,4 +30,4 @@ moon run cmd/main validate examples/retail-orders/contract.json examples/retail-
 - 公开 README、源码、测试、CI、许可证、提交记录
 - MoonBit 为主要实现语言
 - 提供示例数据、示例命令和比赛申报材料
-- 保留 Mooncakes 发布准备，但当前不自动执行发布
+- 已发布至 mooncakes.io

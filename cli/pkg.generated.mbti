@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "Wchwch/moonverity/cli"
+package "Wchwch777/moonverity/cli"
 
 // Values
 pub fn run_diff_contract_text(String, String) -> String

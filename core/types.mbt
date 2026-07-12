@@ -66,6 +66,12 @@ pub(all) enum Rule {
     severity~ : Severity,
     message~ : String
   )
+  PatternMatch(
+    field~ : String,
+    pattern~ : String,
+    severity~ : Severity,
+    message~ : String
+  )
   RowCount(min~ : Int?, max~ : Int?, severity~ : Severity, message~ : String)
 } derive(Eq, Debug)
 

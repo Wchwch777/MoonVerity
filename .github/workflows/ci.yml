@@ -6,28 +6,59 @@ on:
   pull_request:
 
 jobs:
-  moonbit:
-    runs-on: ubuntu-latest
+  test:
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    defaults:
+      run:
+        shell: bash
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install MoonBit
+      - name: Setup Moon env (Linux & macOS)
+        if: matrix.os != 'windows-latest'
         run: |
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
 
-      - name: Refresh registry
-        run: moon update
+      - name: Setup Moon env (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+          irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
+          echo "C:\Users\runneradmin\.moon\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
 
-      - name: Verify toolchain
-        run: moon --version
+      - name: Post Install
+        run: |
+          moon version --all
+          moon update
 
-      - name: Check
-        run: moon check
+      - name: Moon Check
+        run: |
+          moon fmt --check
+          moon check --deny-warn --target all
+          moon info
+          git diff --exit-code
 
-      - name: Test
-        run: moon test
+      - name: Moon Test (wasm-gc)
+        run: |
+          moon test --deny-warn --enable-coverage
+          moon coverage report -f summary
+          moon coverage analyze
+
+      - name: Moon Test (native)
+        run: |
+          moon test --deny-warn --target native --enable-coverage
+          moon coverage report -f summary
+          moon coverage analyze
 
       - name: Verify repository compliance
         run: python scripts/check_repo_compliance.py --skip-remote-sync

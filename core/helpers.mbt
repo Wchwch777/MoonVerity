@@ -100,6 +100,7 @@ fn rule_name(rule : Rule) -> String {
     Enum(field~, ..) => "enum(\{field})"
     IntRange(field~, ..) => "int_range(\{field})"
     CompareInts(left~, right~, ..) => "compare(\{left},\{right})"
+    PatternMatch(field~, ..) => "pattern_match(\{field})"
     RowCount(..) => "row_count"
   }
 }
@@ -112,6 +113,7 @@ fn severity_of(rule : Rule) -> Severity {
     Enum(severity~, ..) => severity
     IntRange(severity~, ..) => severity
     CompareInts(severity~, ..) => severity
+    PatternMatch(severity~, ..) => severity
     RowCount(severity~, ..) => severity
   }
 }
@@ -124,6 +126,7 @@ fn message_of(rule : Rule) -> String {
     Enum(message~, ..) => message
     IntRange(message~, ..) => message
     CompareInts(message~, ..) => message
+    PatternMatch(message~, ..) => message
     RowCount(message~, ..) => message
   }
 }

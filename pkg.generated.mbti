@@ -1,8 +1,8 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "Wchwch/moonverity"
+package "Wchwch777/moonverity"
 
 import {
-  "Wchwch/moonverity/core",
+  "Wchwch777/moonverity/core",
 }
 
 // Values

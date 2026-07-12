@@ -104,3 +104,58 @@ test "validate rows with uniqueness completeness enum range and compare rules" {
   assert_true(report.rule_results[3].failure_rows == [1])
   assert_true(report.rule_results[4].failure_rows == [2])
 }
+
+///|
+test "validate rows with PatternMatch rules" {
+  let contract : Contract = {
+    name: "pattern_test",
+    version: "1.0.0",
+    fields: [
+      field_spec("phone", required=true, description="Phone number"),
+      field_spec("email", required=true, description="Email address"),
+      field_spec("code", required=true, description="System code"),
+    ],
+    rules: [
+      PatternMatch(
+        field="phone",
+        pattern="prefix:+86",
+        severity=Error,
+        message="phone must start with +86",
+      ),
+      PatternMatch(
+        field="email",
+        pattern="suffix:@example.com",
+        severity=Error,
+        message="email must end with @example.com",
+      ),
+      PatternMatch(
+        field="code",
+        pattern="contains:SYS",
+        severity=Warning,
+        message="code should contain SYS",
+      ),
+    ],
+  }
+
+  let rows = [
+    row_of([
+      ("phone", "+861234567890"),
+      ("email", "user@example.com"),
+      ("code", "SYS-001"),
+    ]),
+    row_of([
+      ("phone", "1234567890"),
+      ("email", "user@gmail.com"),
+      ("code", "APP-001"),
+    ]),
+  ]
+
+  let report = validate_rows(contract, rows)
+
+  assert_eq(report.row_count, 2)
+  assert_eq(report.failure_count, 3)
+  assert_true(report.passed is false)
+  assert_true(report.rule_results[0].failure_rows == [1])
+  assert_true(report.rule_results[1].failure_rows == [1])
+  assert_true(report.rule_results[2].failure_rows == [1])
+}
