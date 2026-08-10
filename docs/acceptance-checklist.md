@@ -20,8 +20,8 @@
 - [x] 提交历史保留公开开发过程，且只保留真实贡献者
 - [x] `.gitignore` 排除 `_build`、`.mooncakes` 和本地工作树
 - [x] `moon.mod` 声明 readme、repository、license、version、description
-- [ ] GitHub/GitLink 已接收本轮最终提交（推送后复核远程 hash）
-- [ ] Mooncakes 已通过 dry-run 并完成最终发布（发布后补录版本和链接）
+- [x] GitHub/GitLink 已接收本轮最终提交（两端 `master` 均为 `71dfed832f895209097c2df692405c0643cbf3ca`）
+- [x] Mooncakes 已通过 dry-run 并发布 `Wchwch777/moonverity@0.1.1`
 
 ## CI
 
@@ -47,6 +47,6 @@ git diff --exit-code
 ```
 
 ```powershell
-powershell -File scripts/verify_cli_exit.ps1
+powershell -File scripts/verify_cli_exit.py
 powershell -File scripts/verify_acceptance.ps1 -SkipRepoSyncCheck
 ```
