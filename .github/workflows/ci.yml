@@ -65,7 +65,15 @@ jobs:
 
       - name: Format check
         run: |
-          moon fmt
+          moon version --all
+          moon fmt --verbose
+          fmt_status=$?
+          echo "formatter_exit=$fmt_status"
+          git status --short
+          git diff --stat
+          if [ "$fmt_status" -ne 0 ]; then
+            exit "$fmt_status"
+          fi
           git diff --exit-code
 
       - name: Type check all targets
