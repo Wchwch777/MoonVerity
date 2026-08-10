@@ -5,13 +5,21 @@ MoonVerity is a MoonBit-native data contract and data quality gate toolkit for C
 ## Example API
 
 ```mbt nocheck
+///|
 import {
   "Wchwch777/moonverity",
 }
 
+///|
 let contract = @moonverity.parse_contract_json(contract_text)
+
+///|
 let rows = @moonverity.parse_csv_text(csv_text)
+
+///|
 let report = @moonverity.validate_rows_with_schema(contract, rows)
+
+///|
 let summary = @moonverity.summarize_report(report)
 ```
 
