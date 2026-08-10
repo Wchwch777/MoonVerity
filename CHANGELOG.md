@@ -8,6 +8,8 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+- Added a 24-row reproducible retail benchmark, invalid benchmark variant, row-shape diagnostics, quality scoring, field-reference diagnostics, and deterministic benchmark-suite APIs.
+- Expanded the acceptance suite to 57 tests and raised repository compliance to the official 4,000-line effective MoonBit source cue.
 - Added executable field schema validation, contract inspection, normalization, and complexity statistics.
 - Added StringLength, DistinctCount, and RequiredIf rules plus rule-level contract diffs.
 - Fixed Warning/Error aggregation, negative cross-field comparisons, truthful CLI exit codes, and MoonBit 0.10.x formatting.
