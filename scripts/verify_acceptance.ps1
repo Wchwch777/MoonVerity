@@ -32,6 +32,13 @@ Step "CLI exit behavior" {
   }
 }
 
+Step "Realistic benchmark fixtures" {
+  python scripts/verify_benchmark.py
+  if ($LASTEXITCODE -ne 0) {
+    throw "Benchmark verification failed with exit code $LASTEXITCODE"
+  }
+}
+
 Step "Generated interfaces" {
   moon info
   git diff --exit-code

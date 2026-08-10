@@ -21,6 +21,8 @@ MoonVerity keeps parsing, contract semantics, presentation, and process control 
    - prints exactly one report
    - exits 1 only when an Error-level contract check or validation fails
 
+The core package also exposes missing rule-field diagnostics, a diagnostic-only quality score, and a deterministic benchmark-suite runner. The adapters package exposes row-shape inspection so callers can distinguish empty rows and inconsistent widths after parsing.
+
 ## Validation flow
 
 ```text

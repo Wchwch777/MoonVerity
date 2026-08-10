@@ -1,7 +1,13 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "Wchwch777/moonverity/adapters"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
+pub fn inspect_shape(Array[Map[String, String]]) -> DatasetShape
+
 pub fn normalize_rows(Array[Map[String, String]]) -> Array[Map[String, String]]
 
 pub fn parse_csv_text(String) -> Array[Map[String, String]]
@@ -23,6 +29,13 @@ pub fn row_columns(Array[Map[String, String]]) -> Array[String]
 // Errors
 
 // Types and methods
+pub(all) struct DatasetShape {
+  row_count : Int
+  column_names : Array[String]
+  min_columns_per_row : Int
+  max_columns_per_row : Int
+  empty_row_count : Int
+} derive(Eq, @debug.Debug)
 
 // Type aliases
 

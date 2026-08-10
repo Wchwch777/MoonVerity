@@ -35,6 +35,14 @@ pub fn inspect_contract(contract : Contract) -> Array[ContractIssue] {
   for rule in contract.rules {
     inspect_rule(rule, issues)
   }
+  let references = analyze_contract_references(contract)
+  for field in references.missing_fields {
+    add_issue(
+      issues,
+      "missing_field_reference",
+      "rule references an undeclared field: " + field,
+    )
+  }
   issues
 }
 

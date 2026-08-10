@@ -19,6 +19,10 @@ REQUIRED_FILES = [
     ROOT / ".github" / "workflows" / "ci.yml",
     ROOT / ".github" / "workflows" / "publish.yml",
     ROOT / "scripts" / "verify_cli_exit.py",
+    ROOT / "scripts" / "verify_benchmark.py",
+    ROOT / "examples" / "retail-orders" / "benchmark-contract.json",
+    ROOT / "examples" / "retail-orders" / "orders-benchmark.csv",
+    ROOT / "examples" / "retail-orders" / "orders-benchmark-invalid.csv",
 ]
 
 
@@ -58,9 +62,24 @@ def count_moonbit_lines() -> tuple[int, list[str]]:
             continue
         total += len(path.read_text(encoding="utf-8").splitlines())
     issues: list[str] = []
-    if total < 3000:
-        issues.append(f"MoonBit source scale too small: {total} < 3000 lines")
+    if total < 4000:
+        issues.append(f"MoonBit source scale too small: {total} < 4000 lines")
     return total, issues
+
+
+def check_single_creator() -> list[str]:
+    identities = set(
+        line
+        for line in run_git("log", "--format=%an <%ae>", "--all").splitlines()
+        if line
+    )
+    expected = "Wchwch <1341376491@qq.com>"
+    if identities != {expected}:
+        return [
+            "commit history must contain exactly the creator identity "
+            f"{expected}; found: {sorted(identities)}"
+        ]
+    return []
 
 
 def check_ci_workflow() -> list[str]:
@@ -77,6 +96,7 @@ def check_ci_workflow() -> list[str]:
         "moon build --deny-warn --target all": "all-target build",
         "moon info": "public interface generation",
         "moon test --deny-warn --target native": "native test",
+        "python scripts/verify_benchmark.py": "realistic benchmark verification",
     }
     return [
         f"CI missing {label}: {marker}"
@@ -127,6 +147,8 @@ def check_readme_links() -> list[str]:
     for required in [
         "https://github.com/Wchwch777/MoonVerity",
         "https://gitlink.org.cn/Wchwch/moonverity",
+        "orders-benchmark.csv",
+        "scripts/verify_benchmark.py",
     ]:
         if required not in readme:
             issues.append(f"README.md missing repository link: {required}")
@@ -143,6 +165,7 @@ def main() -> int:
     issues.extend(check_required_files())
     issues.extend(check_ci_workflow())
     issues.extend(check_moon_metadata())
+    issues.extend(check_single_creator())
     commit_count, commit_issues = count_commits()
     issues.extend(commit_issues)
     source_lines, line_issues = count_moonbit_lines()

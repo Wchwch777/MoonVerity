@@ -10,6 +10,7 @@ test "profile command renders column summary" {
   let output = run_profile_text(data, "csv")
 
   assert_true(output.contains("rows: 3"))
+  assert_true(output.contains("shape:"))
   assert_true(output.contains("column: status"))
   assert_true(output.contains("distinct: 2"))
 }
@@ -23,6 +24,7 @@ test "profile command renders machine-readable metrics" {
   let output = run_profile_json(data, "csv")
 
   assert_true(output.contains("\"row_count\": 2"))
+  assert_true(output.contains("\"min_columns_per_row\": 2"))
   assert_true(output.contains("\"min_length\": 4"))
   assert_true(output.contains("\"max_length\": 7"))
 }

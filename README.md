@@ -9,6 +9,7 @@ MoonVerity 是一个纯 MoonBit 数据契约与数据质量闸门工具包，面
 - Warning 与 Error 分离统计；仅 Warning 不会让质量闸门失败
 - CSV 引号/逗号/转义双引号处理，JSONL primitive/null/嵌套值归一化
 - 文本和 JSON 报告、profile 指标、规则级 contract diff、contract 配置检查
+- 字段引用诊断、数据质量评分和确定性 benchmark suite
 - 可复用的行标准化、列投影、CSV/JSONL round-trip API
 
 ## 快速开始
@@ -26,6 +27,8 @@ moon run cmd/main validate examples/retail-orders/contract.json examples/retail-
 # 失败路径：退出码 1；报告仍会打印具体行号和规则
 moon run cmd/main validate examples/retail-orders/contract.json examples/retail-orders/orders-invalid.csv
 ```
+
+基准数据：examples/retail-orders/orders-benchmark.csv；执行 scripts/verify_benchmark.py 可验证 24 行有效/错误业务样本和 CLI 退出码。
 
 ## CLI
 
@@ -58,6 +61,8 @@ check-contract <contract.json> [--json]
 - 一页申报书：[`docs/competition/MoonVerity-proposal.pdf`](docs/competition/MoonVerity-proposal.pdf)
 
 ## 工程与发布
+
+- 当前实现规模按官方 4–10k 有效 MoonBit 行参考口径审计，基准数据明确标注为可复现合成业务样本
 
 - Apache-2.0，见 [`LICENSE`](LICENSE) 与 [`NOTICE`](NOTICE)
 - 三平台 GitHub Actions：Linux / macOS / Windows，完整历史、格式、check、build、test、info 和合规检查

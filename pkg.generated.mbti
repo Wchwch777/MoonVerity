@@ -2,11 +2,14 @@
 package "Wchwch777/moonverity"
 
 import {
+  "Wchwch777/moonverity/adapters",
   "Wchwch777/moonverity/cli",
   "Wchwch777/moonverity/core",
 }
 
 // Values
+pub fn analyze_contract_references(@core.Contract) -> @core.ContractReferences
+
 pub fn contract_field_names(@core.Contract) -> Array[String]
 
 pub fn contract_rule_names(@core.Contract) -> Array[String]
@@ -20,6 +23,8 @@ pub fn field_spec(String, kind? : @core.FieldType, required? : Bool, nullable? :
 pub fn has_field(@core.Contract, String) -> Bool
 
 pub fn inspect_contract(@core.Contract) -> Array[@core.ContractIssue]
+
+pub fn inspect_shape(Array[Map[String, String]]) -> @adapters.DatasetShape
 
 pub fn normalize_contract(@core.Contract) -> @core.Contract
 
@@ -35,6 +40,8 @@ pub fn profile_rows(Array[Map[String, String]]) -> @core.DatasetProfile
 
 pub fn project_rows(Array[Map[String, String]], Array[String]) -> Array[Map[String, String]]
 
+pub fn quality_score(@core.DatasetProfile, @core.ValidationReport) -> @core.QualityScore
+
 pub fn read_csv_file(String) -> Array[Map[String, String]]
 
 pub fn read_jsonl_file(String) -> Array[Map[String, String]]
@@ -45,7 +52,11 @@ pub fn render_jsonl(Array[Map[String, String]]) -> String
 
 pub fn row_of(Array[(String, String)]) -> Map[String, String]
 
+pub fn rule_field_references(@core.Rule) -> Array[String]
+
 pub fn rule_summaries(@core.ValidationReport) -> Array[@core.RuleSummary]
+
+pub fn run_benchmark_suite(Array[@core.BenchmarkCase]) -> @core.BenchmarkSuite
 
 pub fn run_contract_check_json(String) -> @cli.ValidationOutcome
 
@@ -78,6 +89,12 @@ pub fn validate_text(String, String, String) -> @cli.ValidationOutcome
 // Types and methods
 
 // Type aliases
+pub using @core {type BenchmarkCase}
+
+pub using @core {type BenchmarkCaseResult}
+
+pub using @core {type BenchmarkSuite}
+
 pub using @core {type ColumnProfile}
 
 pub using @core {type ComparisonOp}
@@ -88,13 +105,19 @@ pub using @core {type ContractDiff}
 
 pub using @core {type ContractIssue}
 
+pub using @core {type ContractReferences}
+
 pub using @core {type ContractStats}
 
 pub using @core {type DatasetProfile}
 
+pub using @adapters {type DatasetShape}
+
 pub using @core {type FieldSpec}
 
 pub using @core {type FieldType}
+
+pub using @core {type QualityScore}
 
 pub using @core {type Rule}
 

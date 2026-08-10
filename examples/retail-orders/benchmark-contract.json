@@ -1,0 +1,71 @@
+{
+  "name": "retail_orders_benchmark",
+  "version": "2.0.0",
+  "fields": [
+    { "name": "order_id", "required": true, "pattern": "prefix:ORD-", "description": "订单编号" },
+    { "name": "customer_id", "required": true, "description": "客户编号" },
+    {
+      "name": "status",
+      "required": true,
+      "allowed_values": ["paid", "shipped", "cancelled", "refunded"],
+      "description": "订单状态"
+    },
+    {
+      "name": "amount",
+      "kind": "int",
+      "required": true,
+      "min_int": 1,
+      "max_int": 20000,
+      "description": "订单金额（分）"
+    },
+    {
+      "name": "discount",
+      "kind": "int",
+      "required": true,
+      "min_int": 0,
+      "max_int": 5000,
+      "description": "优惠金额（分）"
+    },
+    { "name": "channel", "required": true, "description": "销售渠道" },
+    { "name": "order_date", "kind": "date", "required": true, "description": "下单日期" },
+    { "name": "customer_name", "required": true, "description": "客户姓名" }
+  ],
+  "rules": [
+    {
+      "kind": "unique",
+      "fields": ["order_id"],
+      "severity": "error",
+      "message": "order_id must be unique"
+    },
+    {
+      "kind": "enum",
+      "field": "channel",
+      "allowed_values": ["web", "app", "store"],
+      "severity": "warning",
+      "message": "channel should be web, app, or store"
+    },
+    {
+      "kind": "compare_ints",
+      "left": "amount",
+      "op": ">=",
+      "right": "discount",
+      "severity": "error",
+      "message": "amount must cover discount"
+    },
+    {
+      "kind": "string_length",
+      "field": "customer_name",
+      "min_length": 2,
+      "max_length": 32,
+      "severity": "warning",
+      "message": "customer name length is unusual"
+    },
+    {
+      "kind": "row_count",
+      "min": 20,
+      "max": 30,
+      "severity": "error",
+      "message": "benchmark contains 20 to 30 orders"
+    }
+  ]
+}

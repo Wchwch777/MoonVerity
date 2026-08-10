@@ -13,7 +13,8 @@ pub fn validate_text(
   let contract = @core.parse_contract_json(contract_text)
   let rows = parse_rows(data_text, data_format)
   let report = @core.validate_rows_with_schema(contract, rows)
-  { output: format_validation_report(report), passed: report.passed }
+  let quality = @core.quality_score(@core.profile_rows(rows), report)
+  { output: format_validation_report(report, quality), passed: report.passed }
 }
 
 ///|
@@ -29,13 +30,14 @@ pub fn run_validate_text(
 pub fn run_profile_text(data_text : String, data_format : String) -> String {
   let rows = parse_rows(data_text, data_format)
   let profile = @core.profile_rows(rows)
-  format_profile(profile)
+  format_profile(profile, @adapters.inspect_shape(rows))
 }
 
 ///|
 pub fn run_profile_json(data_text : String, data_format : String) -> String {
   let rows = parse_rows(data_text, data_format)
   let profile = @core.profile_rows(rows)
+  let shape = @adapters.inspect_shape(rows)
   let columns = profile.columns.map(fn(column) {
     Json::object({
       "name": Json::string(column.name),
@@ -51,6 +53,14 @@ pub fn run_profile_json(data_text : String, data_format : String) -> String {
   })
   Json::object({
     "row_count": Json::number(profile.row_count.to_double()),
+    "shape": Json::object({
+      "column_names": Json::array(
+        shape.column_names.map(fn(name) { Json::string(name) }),
+      ),
+      "min_columns_per_row": Json::number(shape.min_columns_per_row.to_double()),
+      "max_columns_per_row": Json::number(shape.max_columns_per_row.to_double()),
+      "empty_row_count": Json::number(shape.empty_row_count.to_double()),
+    }),
     "columns": Json::array(columns),
   }).stringify(indent=2)
 }
@@ -114,7 +124,8 @@ pub fn validate_json(
   let contract = @core.parse_contract_json(contract_text)
   let rows = parse_rows(data_text, data_format)
   let report = @core.validate_rows_with_schema(contract, rows)
-  { output: validation_report_json(report), passed: report.passed }
+  let quality = @core.quality_score(@core.profile_rows(rows), report)
+  { output: validation_report_json(report, quality), passed: report.passed }
 }
 
 ///|
@@ -159,13 +170,17 @@ fn parse_rows(
 }
 
 ///|
-fn format_validation_report(report : @core.ValidationReport) -> String {
+fn format_validation_report(
+  report : @core.ValidationReport,
+  quality : @core.QualityScore,
+) -> String {
   let lines = [
     "dataset: \{report.dataset_name}",
     "rows: \{report.row_count}",
     "passed: \{report.passed}",
     "failures: \{report.failure_count}",
     "warnings: \{report.warning_count}",
+    "quality: \{quality.score_percent}% grade=\{quality.grade} completeness=\{quality.completeness_percent}%",
   ]
   for result in report.rule_results {
     let status = if result.passed {
@@ -198,8 +213,14 @@ fn format_contract_issues(
 }
 
 ///|
-fn format_profile(profile : @core.DatasetProfile) -> String {
-  let lines = ["rows: \{profile.row_count}"]
+fn format_profile(
+  profile : @core.DatasetProfile,
+  shape : @adapters.DatasetShape,
+) -> String {
+  let lines = [
+    "rows: \{profile.row_count}",
+    "shape: min_columns=\{shape.min_columns_per_row} max_columns=\{shape.max_columns_per_row} empty_rows=\{shape.empty_row_count}",
+  ]
   for column in profile.columns {
     lines.push(
       "column: \{column.name} non_empty: \{column.non_empty_count} empty: \{column.empty_count} distinct: \{column.distinct_values.length()}",
@@ -248,7 +269,10 @@ fn format_names(names : Array[String]) -> String {
 }
 
 ///|
-fn validation_report_json(report : @core.ValidationReport) -> String {
+fn validation_report_json(
+  report : @core.ValidationReport,
+  quality : @core.QualityScore,
+) -> String {
   let results = report.rule_results.map(fn(result) {
     Json::object({
       "name": Json::string(result.name),
@@ -266,6 +290,17 @@ fn validation_report_json(report : @core.ValidationReport) -> String {
     "passed": Json::boolean(report.passed),
     "failure_count": Json::number(report.failure_count.to_double()),
     "warning_count": Json::number(report.warning_count.to_double()),
+    "quality": Json::object({
+      "total_cells": Json::number(quality.total_cells.to_double()),
+      "non_empty_cells": Json::number(quality.non_empty_cells.to_double()),
+      "completeness_percent": Json::number(
+        quality.completeness_percent.to_double(),
+      ),
+      "error_row_count": Json::number(quality.error_row_count.to_double()),
+      "warning_row_count": Json::number(quality.warning_row_count.to_double()),
+      "score_percent": Json::number(quality.score_percent.to_double()),
+      "grade": Json::string(quality.grade),
+    }),
     "rule_results": Json::array(results),
   }).stringify(indent=2)
 }

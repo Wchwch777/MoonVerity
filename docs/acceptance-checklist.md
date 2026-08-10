@@ -10,7 +10,9 @@
 - [x] 校验失败 CLI 返回 1，成功或仅 Warning 返回 0
 - [x] CSV 引号、逗号、转义双引号、CRLF、缺失单元格有边界测试
 - [x] JSONL null、布尔、负数、嵌套对象有边界测试
-- [x] 当前有效 MoonBit 源码规模超过 3,000 行，测试覆盖核心、适配器、CLI 和入口
+- [x] 当前有效 MoonBit 源码规模达到官方 4,000–10,000 行参考区间，测试覆盖核心、适配器、CLI、入口和基准 fixture
+- [x] 24 行可复现零售订单 benchmark 覆盖日期、渠道、状态、金额、折扣、引号字段和错误变体
+- [x] 字段引用、质量评分、行形状和 benchmark suite 均有边界测试
 
 ## 仓库与发布
 
@@ -48,5 +50,6 @@ git diff --exit-code
 
 ```powershell
 powershell -File scripts/verify_cli_exit.py
+python scripts/verify_benchmark.py
 powershell -File scripts/verify_acceptance.ps1 -SkipRepoSyncCheck
 ```

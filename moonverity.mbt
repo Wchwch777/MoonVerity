@@ -1,10 +1,14 @@
 ///|
 pub using @core {
+  type BenchmarkCase,
+  type BenchmarkCaseResult,
+  type BenchmarkSuite,
   type ColumnProfile,
   type ComparisonOp,
   type Contract,
   type ContractDiff,
   type ContractIssue,
+  type ContractReferences,
   type ContractStats,
   type DatasetProfile,
   type FieldSpec,
@@ -12,10 +16,13 @@ pub using @core {
   type Rule,
   type RuleResult,
   type RuleSummary,
+  type QualityScore,
   type Severity,
   type ValidationSummary,
   type ValidationReport,
   diff_contracts,
+  analyze_contract_references,
+  quality_score,
   contract_field_names,
   contract_rule_names,
   contract_stats,
@@ -27,6 +34,8 @@ pub using @core {
   profile_rows,
   row_of,
   rule_summaries,
+  rule_field_references,
+  run_benchmark_suite,
   summarize_report,
   validate_rows_with_schema,
   validate_rows,
@@ -34,6 +43,8 @@ pub using @core {
 
 ///|
 pub using @adapters {
+  type DatasetShape,
+  inspect_shape,
   parse_csv_text,
   parse_jsonl_text,
   read_csv_file,

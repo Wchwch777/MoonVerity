@@ -24,6 +24,7 @@ test "validate command renders readable summary" {
 
   assert_true(output.contains("dataset: retail_orders"))
   assert_true(output.contains("passed: false"))
+  assert_true(output.contains("quality:"))
   assert_true(output.contains("order_id must be unique"))
 }
 
@@ -47,6 +48,21 @@ test "validate entry point exposes a failing process outcome" {
 
   assert_true(outcome.passed is false)
   assert_true(outcome.output.contains("passed: false"))
+}
+
+///|
+test "validate json includes reproducible quality metrics" {
+  let contract =
+    #|{
+    #|  "name": "orders",
+    #|  "version": "1.0.0",
+    #|  "fields": [],
+    #|  "rules": []
+    #|}
+  let output = run_validate_json(contract, "id,status\n1,paid\n", "csv")
+
+  assert_true(output.contains("\"quality\""))
+  assert_true(output.contains("\"score_percent\": 100"))
 }
 
 ///|

@@ -1,0 +1,25 @@
+order_id,customer_id,status,amount,discount,channel,order_date,customer_name
+ORD-1001,C1001,paid,1299,100,web,2026-07-01,Alice Wang
+ORD-1002,C1002,shipped,2599,200,app,2026-07-02,Bob Chen
+ORD-1003,C1003,paid,799,0,store,2026-07-03,Chen Li
+ORD-1004,C1004,refunded,4599,500,web,2026-07-04,Diana Smith
+ORD-1005,C1005,shipped,1899,100,app,2026-07-05,Eric Zhao
+ORD-1006,C1006,paid,699,50,store,2026-07-06,Fang Liu
+ORD-1007,C1007,paid,3299,300,web,2026-07-07,Grace Wu
+ORD-1008,C1008,cancelled,999,100,app,2026-07-08,Hannah Xu
+ORD-1009,C1009,shipped,5699,800,store,2026-07-09,Ivan Zhou
+ORD-1010,C1010,paid,2399,200,web,2026-07-10,Jane Lin
+ORD-1011,C1011,paid,1499,100,app,2026-07-11,Kai He
+ORD-1012,C1012,refunded,6799,900,store,2026-07-12,Linda Qian
+ORD-1013,C1013,shipped,899,0,web,2026-07-13,Mike Sun
+ORD-1014,C1014,paid,4199,400,app,2026-07-14,Nora Peng
+ORD-1015,C1015,paid,2799,250,store,2026-07-15,"Olivia, Zhang"
+ORD-1016,C1016,cancelled,1199,100,web,2026-07-16,Paul Guo
+ORD-1017,C1017,shipped,3599,300,app,2026-07-17,Qing Yu
+ORD-1018,C1018,paid,9999,1200,store,2026-07-18,Rita Deng
+ORD-1019,C1019,paid,2199,150,web,2026-07-19,Sam Tao
+ORD-1020,C1020,shipped,1499,100,app,2026-07-20,Tina Luo
+ORD-1021,C1021,paid,3899,350,store,2026-07-21,Uma Fan
+ORD-1022,C1022,refunded,7499,700,web,2026-07-22,Victor Cai
+ORD-1023,C1023,paid,1699,100,app,2026-07-23,Wendy Mo
+ORD-1024,C1024,shipped,2999,200,store,2026-07-24,Young Bai

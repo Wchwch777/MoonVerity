@@ -24,6 +24,7 @@ moon fmt --check
 moon check --deny-warn --target all
 moon build --deny-warn --target all
 moon test --deny-warn --target wasm-gc
+python scripts/verify_benchmark.py
 
 moon run cmd/main validate examples/retail-orders/contract.json examples/retail-orders/orders-valid.csv
 moon run cmd/main profile examples/retail-orders/orders-valid.csv --json
@@ -46,6 +47,8 @@ moon run cmd/main validate examples/retail-orders/contract.json examples/retail-
 - `examples/retail-orders/`: valid and invalid fixtures
 - `docs/`: architecture, competition requirements, runbook, and acceptance material
 - `scripts/`: repository compliance, CLI exit, acceptance, and proposal helpers
+
+The project also includes field-reference diagnostics, a deterministic quality score, a benchmark-suite API, row-shape inspection, and a 24-row reproducible retail-order fixture with an invalid variant.
 
 ## Open-source delivery
 

@@ -52,6 +52,8 @@ moon run cmd/main profile examples/retail-orders/orders-valid.csv --json
 
 JSON profile 包含 `row_count`、每列非空/空值、distinct 值以及最小/最大/总文本长度。
 
+基准验证命令：python scripts/verify_benchmark.py。它验证 24 条可复现合成零售订单、有效/错误两条路径、profile 行数/列宽和 contract check。
+
 ## 4. 契约 diff 与配置检查
 
 ```bash

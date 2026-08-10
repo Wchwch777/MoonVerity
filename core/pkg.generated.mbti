@@ -7,6 +7,8 @@ import {
 }
 
 // Values
+pub fn analyze_contract_references(Contract) -> ContractReferences
+
 pub fn contract_field_names(Contract) -> Array[String]
 
 pub fn contract_rule_names(Contract) -> Array[String]
@@ -27,9 +29,15 @@ pub fn parse_contract_json(String) -> Contract
 
 pub fn profile_rows(Array[Map[String, String]]) -> DatasetProfile
 
+pub fn quality_score(DatasetProfile, ValidationReport) -> QualityScore
+
 pub fn row_of(Array[(String, String)]) -> Map[String, String]
 
+pub fn rule_field_references(Rule) -> Array[String]
+
 pub fn rule_summaries(ValidationReport) -> Array[RuleSummary]
+
+pub fn run_benchmark_suite(Array[BenchmarkCase]) -> BenchmarkSuite
 
 pub fn summarize_report(ValidationReport) -> ValidationSummary
 
@@ -40,6 +48,31 @@ pub fn validate_rows_with_schema(Contract, Array[Map[String, String]]) -> Valida
 // Errors
 
 // Types and methods
+pub(all) struct BenchmarkCase {
+  name : String
+  contract : Contract
+  rows : Array[Map[String, String]]
+  expected_passed : Bool
+} derive(Eq, @debug.Debug)
+
+pub(all) struct BenchmarkCaseResult {
+  name : String
+  expected_passed : Bool
+  actual_passed : Bool
+  consistent : Bool
+  row_count : Int
+  failure_count : Int
+  warning_count : Int
+  quality : QualityScore
+} derive(Eq, @debug.Debug)
+
+pub(all) struct BenchmarkSuite {
+  passed : Bool
+  case_count : Int
+  cases : Array[BenchmarkCaseResult]
+  failed_cases : Array[String]
+} derive(Eq, @debug.Debug)
+
 pub(all) struct ColumnProfile {
   name : String
   non_empty_count : Int
@@ -81,6 +114,12 @@ pub(all) struct ContractIssue {
   message : String
 } derive(Eq, @debug.Debug)
 
+pub(all) struct ContractReferences {
+  referenced_fields : Array[String]
+  missing_fields : Array[String]
+  unused_fields : Array[String]
+} derive(Eq, @debug.Debug)
+
 pub(all) struct ContractStats {
   field_count : Int
   required_field_count : Int
@@ -114,6 +153,16 @@ pub(all) enum FieldType {
   Int
   Bool
   Date
+} derive(Eq, @debug.Debug)
+
+pub(all) struct QualityScore {
+  total_cells : Int
+  non_empty_cells : Int
+  completeness_percent : Int
+  error_row_count : Int
+  warning_row_count : Int
+  score_percent : Int
+  grade : String
 } derive(Eq, @debug.Debug)
 
 pub(all) enum Rule {
