@@ -64,7 +64,9 @@ jobs:
           moon update
 
       - name: Format check
-        run: moon fmt --check
+        run: |
+          moon fmt
+          git diff --exit-code
 
       - name: Type check all targets
         run: moon check --deny-warn --target all

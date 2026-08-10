@@ -31,7 +31,7 @@
 - [x] GitHub Actions 使用 `fetch-depth: 0` 拉取完整历史
 - [x] Linux/macOS/Windows 均有 MoonBit 安装步骤
 - [x] Linux/macOS/Windows 均有 native 构建所需 C/OpenSSL 依赖步骤
-- [x] CI 显式运行 `moon fmt --check`
+- [x] CI 按官方模板运行 `moon fmt` 并用 `git diff --exit-code` 检查格式漂移
 - [x] CI 显式运行 `moon check --deny-warn --target all`
 - [x] CI 显式运行 `moon build --deny-warn --target all`
 - [x] CI 运行 `moon info` 并以 `git diff --exit-code` 检查生成接口无漂移

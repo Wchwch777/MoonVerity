@@ -20,7 +20,7 @@ let summary = @moonverity.summarize_report(report)
 ## Commands
 
 ```bash
-moon fmt --check
+moon fmt && git diff --exit-code
 moon check --deny-warn --target all
 moon build --deny-warn --target all
 moon test --deny-warn --target wasm-gc

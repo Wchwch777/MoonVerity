@@ -7,7 +7,7 @@
 ```bash
 moon version --all
 moon update
-moon fmt --check
+moon fmt && git diff --exit-code
 moon check --deny-warn --target all
 moon build --deny-warn --target all
 moon test --deny-warn --target wasm-gc

@@ -10,7 +10,14 @@ function Step($name, [scriptblock]$action) {
 }
 
 Step "MoonBit format" {
-  moon fmt --check
+  moon fmt
+  if ($LASTEXITCODE -ne 0) {
+    throw "MoonBit formatter failed with exit code $LASTEXITCODE"
+  }
+  git diff --exit-code
+  if ($LASTEXITCODE -ne 0) {
+    throw "MoonBit formatter changed tracked files"
+  }
 }
 
 Step "MoonBit check" {
