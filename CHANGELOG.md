@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 - Prepared the OSC2026 acceptance release with schema-aware validation, truthful CLI exits, expanded tests, and three-platform CI.
 
-## Unreleased
+## 0.1.2 - 2026-08-10
 
 - Added a 24-row reproducible retail benchmark, invalid benchmark variant, row-shape diagnostics, quality scoring, field-reference diagnostics, and deterministic benchmark-suite APIs.
 - Expanded the acceptance suite to 57 tests and raised repository compliance to the official 4,000-line effective MoonBit source cue.

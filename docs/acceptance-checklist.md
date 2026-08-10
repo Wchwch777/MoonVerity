@@ -24,7 +24,7 @@
 - [x] `moon.mod` 声明 readme、repository、license、version、description
 - [x] GitHub/GitLink 已接收本轮最终提交（两端 master 与本地 HEAD 同步）
 - [x] 全部公开提交统一为创建者身份，无第二个项目贡献者
-- [x] Mooncakes 已通过 dry-run 并发布 `Wchwch777/moonverity@0.1.1`
+- [x] Mooncakes 已通过 dry-run 并发布 `Wchwch777/moonverity@0.1.2`
 
 ## CI
 

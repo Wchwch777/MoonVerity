@@ -15,9 +15,9 @@
 - 本地 CLI 负路径和仓库合规脚本
 - GitHub 与 GitLink 的 master 与本地 HEAD 保持同步，默认分支均为 master
 - 全部公开提交统一为创建者 Wchwch <1341376491@qq.com>，无第二贡献者
-- Mooncakes：[`Wchwch777/moonverity@0.1.1`](https://mooncakes.io/docs/Wchwch777/moonverity)
+- Mooncakes：[`Wchwch777/moonverity@0.1.2`](https://mooncakes.io/docs/Wchwch777/moonverity)
 
 ## 发布记录
 
 - `moon publish --dry-run --verbose`：服务端 `202 Accepted`，包内解包检查通过
-- `moon publish --verbose`：服务端 `200 OK`，`0.1.1` 发布完成
+- `moon publish --verbose`：服务端 `200 OK`，`0.1.2` 发布完成
