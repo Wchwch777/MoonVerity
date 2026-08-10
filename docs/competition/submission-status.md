@@ -14,7 +14,7 @@
 - 三平台 CI、完整历史 checkout、显式 build、Moon info 漂移检查
 - 本地 CLI 负路径和仓库合规脚本
 - GitHub 与 GitLink 的 master 与本地 HEAD 保持同步，默认分支均为 master
-- 全部 20 条提交统一为创建者 Wchwch <1341376491@qq.com>，无第二贡献者
+- 全部 21 条提交统一为创建者 Wchwch <1341376491@qq.com>，无第二贡献者
 - Mooncakes：[`Wchwch777/moonverity@0.1.1`](https://mooncakes.io/docs/Wchwch777/moonverity)
 
 ## 发布记录

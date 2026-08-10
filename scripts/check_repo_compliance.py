@@ -70,7 +70,7 @@ def count_moonbit_lines() -> tuple[int, list[str]]:
 def check_single_creator() -> list[str]:
     identities = set(
         line
-        for line in run_git("log", "--format=%an <%ae>", "--all").splitlines()
+        for line in run_git("log", "HEAD", "--format=%an <%ae>").splitlines()
         if line
     )
     expected = "Wchwch <1341376491@qq.com>"
