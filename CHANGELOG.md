@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.1.1 - 2026-08-10
+
+- Prepared the OSC2026 acceptance release with schema-aware validation, truthful CLI exits, expanded tests, and three-platform CI.
+
 ## Unreleased
 
 - Added executable field schema validation, contract inspection, normalization, and complexity statistics.

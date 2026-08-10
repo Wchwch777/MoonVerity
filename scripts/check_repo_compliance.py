@@ -91,7 +91,7 @@ def check_moon_metadata() -> list[str]:
         'readme = "README.mbt.md"',
         'repository = "https://github.com/Wchwch777/MoonVerity"',
         'license = "Apache-2.0"',
-        'version = "0.1.0"',
+        'version = "0.1.1"',
     ]
     return [
         f"moon.mod missing publication metadata: {marker}"
