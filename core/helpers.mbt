@@ -76,7 +76,7 @@ fn compare_ints(left : Int, op : ComparisonOp, right : Int) -> Bool {
 
 ///|
 fn unique_strings(values : Array[String]) -> Array[String] {
-  let seen : Map[String, Unit] = {}
+  let seen : Map[String, Unit] = Map([])
   let result = []
   for value in values {
     if !seen.contains(value) {
@@ -101,6 +101,10 @@ fn rule_name(rule : Rule) -> String {
     IntRange(field~, ..) => "int_range(\{field})"
     CompareInts(left~, right~, ..) => "compare(\{left},\{right})"
     PatternMatch(field~, ..) => "pattern_match(\{field})"
+    StringLength(field~, ..) => "string_length(\{field})"
+    DistinctCount(field~, ..) => "distinct_count(\{field})"
+    RequiredIf(condition_field~, field~, ..) =>
+      "required_if(\{condition_field},\{field})"
     RowCount(..) => "row_count"
   }
 }
@@ -114,6 +118,9 @@ fn severity_of(rule : Rule) -> Severity {
     IntRange(severity~, ..) => severity
     CompareInts(severity~, ..) => severity
     PatternMatch(severity~, ..) => severity
+    StringLength(severity~, ..) => severity
+    DistinctCount(severity~, ..) => severity
+    RequiredIf(severity~, ..) => severity
     RowCount(severity~, ..) => severity
   }
 }
@@ -127,6 +134,9 @@ fn message_of(rule : Rule) -> String {
     IntRange(message~, ..) => message
     CompareInts(message~, ..) => message
     PatternMatch(message~, ..) => message
+    StringLength(message~, ..) => message
+    DistinctCount(message~, ..) => message
+    RequiredIf(message~, ..) => message
     RowCount(message~, ..) => message
   }
 }

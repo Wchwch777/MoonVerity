@@ -1,47 +1,73 @@
-# 演示运行手册
+# MoonVerity 演示运行手册
 
 ## 环境准备
 
-```bash
-moon check --warn-list +73
-moon test
-```
-
-## 示例一：订单数据校验
+建议使用 MoonBit 0.10.x（本地验收使用 `moonc v0.10.4`）：
 
 ```bash
-moon run cmd/main validate examples/retail-orders/contract.json examples/retail-orders/orders.csv
+moon version --all
+moon update
+moon fmt --check
+moon check --deny-warn --target all
+moon build --deny-warn --target all
+moon test --deny-warn --target wasm-gc
 ```
 
-预期：
+CI 还会在 Linux/macOS/Windows 安装对应的 C/OpenSSL 依赖并运行 native 测试。
 
-- 输出 `PASS`。
-- 报告中包含行数、规则数和失败条目统计。
-
-## 示例二：数据画像
+## 1. 成功校验
 
 ```bash
-moon run cmd/main profile examples/retail-orders/orders.csv
+moon run cmd/main validate examples/retail-orders/contract.json examples/retail-orders/orders-valid.csv
 ```
 
-预期：
+预期关键输出：
 
-- 输出每个字段的非空统计、空值统计与去重值数量。
+```text
+dataset: retail_orders
+rows: 3
+passed: true
+failures: 0
+warnings: 0
+```
 
-## 示例三：契约差异
+该命令退出码为 `0`。
+
+## 2. 失败校验
+
+```bash
+moon run cmd/main validate examples/retail-orders/contract.json examples/retail-orders/orders-invalid.csv
+```
+
+预期关键输出包含 `passed: false`、`[fail]`、失败行号和规则消息；该命令退出码为 `1`。这条负路径用于证明校验失败不会错误返回 0。
+
+`Warning` 只增加 `warnings` 计数并显示为 `[warn]`，不会改变 `passed: true`；只有 Error 失败才会使进程退出 1。
+
+## 3. JSON 报告与画像
+
+```bash
+moon run cmd/main validate examples/retail-orders/contract.json examples/retail-orders/orders-valid.csv --json
+moon run cmd/main profile examples/retail-orders/orders-valid.csv --json
+```
+
+JSON profile 包含 `row_count`、每列非空/空值、distinct 值以及最小/最大/总文本长度。
+
+## 4. 契约 diff 与配置检查
 
 ```bash
 moon run cmd/main diff-contract examples/retail-orders/contract.json examples/retail-orders/contract_v1_1.json
+moon run cmd/main diff-contract examples/retail-orders/contract.json examples/retail-orders/contract_v1_1.json --json
+moon run cmd/main check-contract examples/retail-orders/contract.json
 ```
 
-预期：
+diff 同时列出字段与规则的新增、删除、变更；`check-contract` 检查重复字段、非法范围、空规则参数和不完整配置。
 
-- 输出新增、删除或变更的字段与规则摘要。
+## 5. 本地验收脚本
 
-## 比赛材料对应关系
+```powershell
+powershell -File scripts/verify_cli_exit.ps1
+powershell -File scripts/verify_acceptance.ps1 -SkipRepoSyncCheck
+python scripts/check_repo_compliance.py --skip-remote-sync
+```
 
-- 公开仓库：GitHub / GitLink
-- 一页 PDF：`docs/competition/MoonVerity-proposal.pdf`
-- 示例数据：`examples/retail-orders/`
-- 自查脚本：`scripts/check_repo_compliance.py`
-- 验收脚本：`scripts/verify_acceptance.ps1`
+外部远程同步检查需要当前仓库同时配置 `origin`（GitLink）和 `github`（GitHub），且两端默认分支均为 `master`。

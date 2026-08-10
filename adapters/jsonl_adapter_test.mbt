@@ -10,3 +10,12 @@ test "parse jsonl text into normalized rows" {
   assert_eq(rows[0]["amount"], "199")
   assert_eq(rows[1]["customer_id"], "C002")
 }
+
+///|
+test "parse jsonl null as an empty cell" {
+  let rows = parse_jsonl_text("{\"id\":1,\"note\":null}\n")
+
+  assert_eq(rows.length(), 1)
+  assert_eq(rows[0]["id"], "1")
+  assert_eq(rows[0]["note"], "")
+}

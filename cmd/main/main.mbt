@@ -5,20 +5,17 @@ fn main {
     print_usage_and_exit(1)
   }
 
-  let output = match args[1] {
+  match args[1] {
     "validate" => handle_validate(args)
-    "profile" => handle_profile(args)
-    "diff-contract" => handle_diff_contract(args)
-    _ => {
-      print_usage_and_exit(1)
-      ""
-    }
+    "profile" => println(handle_profile(args))
+    "diff-contract" => println(handle_diff_contract(args))
+    "check-contract" => handle_contract_check(args)
+    _ => print_usage_and_exit(1)
   }
-  println(output)
 }
 
 ///|
-fn handle_validate(args : Array[String]) -> String {
+fn handle_validate(args : Array[String]) -> Unit {
   if args.length() < 4 {
     print_usage_and_exit(1)
   }
@@ -27,11 +24,13 @@ fn handle_validate(args : Array[String]) -> String {
   let data_text = read_text(data_path)
   let format = detect_data_format(data_path)
   let as_json = args.length() > 4 && args[4] == "--json"
-  if as_json {
-    @cli.run_validate_json(contract_text, data_text, format)
+  let outcome = if as_json {
+    @cli.validate_json(contract_text, data_text, format)
   } else {
-    @cli.run_validate_text(contract_text, data_text, format)
+    @cli.validate_text(contract_text, data_text, format)
   }
+  println(outcome.output)
+  @sys.exit(if outcome.passed { 0 } else { 1 })
 }
 
 ///|
@@ -40,7 +39,13 @@ fn handle_profile(args : Array[String]) -> String {
     print_usage_and_exit(1)
   }
   let data_path = args[2]
-  @cli.run_profile_text(read_text(data_path), detect_data_format(data_path))
+  let data_text = read_text(data_path)
+  let data_format = detect_data_format(data_path)
+  if args.length() > 3 && args[3] == "--json" {
+    @cli.run_profile_json(data_text, data_format)
+  } else {
+    @cli.run_profile_text(data_text, data_format)
+  }
 }
 
 ///|
@@ -48,7 +53,28 @@ fn handle_diff_contract(args : Array[String]) -> String {
   if args.length() < 4 {
     print_usage_and_exit(1)
   }
-  @cli.run_diff_contract_text(read_text(args[2]), read_text(args[3]))
+  let before = read_text(args[2])
+  let after = read_text(args[3])
+  if args.length() > 4 && args[4] == "--json" {
+    @cli.run_diff_contract_json(before, after)
+  } else {
+    @cli.run_diff_contract_text(before, after)
+  }
+}
+
+///|
+fn handle_contract_check(args : Array[String]) -> Unit {
+  if args.length() < 3 {
+    print_usage_and_exit(1)
+  }
+  let contract_text = read_text(args[2])
+  let outcome = if args.length() > 3 && args[3] == "--json" {
+    @cli.run_contract_check_json(contract_text)
+  } else {
+    @cli.run_contract_check_text(contract_text)
+  }
+  println(outcome.output)
+  @sys.exit(if outcome.passed { 0 } else { 1 })
 }
 
 ///|
@@ -74,6 +100,7 @@ fn print_usage_and_exit(code : Int) -> Unit {
   println("MoonVerity CLI")
   println("  validate <contract.json> <data.csv|data.jsonl> [--json]")
   println("  profile <data.csv|data.jsonl>")
-  println("  diff-contract <before.json> <after.json>")
+  println("  diff-contract <before.json> <after.json> [--json]")
+  println("  check-contract <contract.json> [--json]")
   @sys.exit(code)
 }

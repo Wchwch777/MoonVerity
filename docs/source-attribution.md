@@ -1,29 +1,27 @@
-# 来源说明
+# Source Attribution
 
-## 项目原创边界
+## Original implementation boundary
 
-MoonVerity 的核心实现、目录组织、契约模型、CSV / JSONL 适配、CLI 输出和示例业务均为本仓库独立完成的 MoonBit 工程实现，不是对单一现有项目的直接搬运。
+The MoonVerity core model, schema validator, quality rules, profiles, contract diff, adapters, CLI renderers, examples, and acceptance scripts are maintained as this repository's own MoonBit project. The repository is not a direct copy of a single external implementation.
 
-## 参考来源
+## Public references
 
-本项目在选题和包装阶段参考了以下公开资料：
+- MoonBit OSC2026 official repository and website, for competition scope, open-source expectations, documentation quality, and acceptance framing:
+  - <https://github.com/moonbitlang/OSC2026>
+  - <https://moonbitlang.github.io/OSC2026/>
+- MoonBit community workflow templates, for the cross-platform CI installation and check shape:
+  - <https://github.com/moonbit-community/.github/tree/main/workflow-templates>
+- MoonBit package and command documentation, for `moon.mod`, `moon.pkg`, warning handling, format, info, test, and publish commands:
+  - <https://docs.moonbitlang.com/en/stable/toolchain/moon/package.html>
+  - <https://docs.moonbitlang.com/en/latest/toolchain/moon/commands.html>
 
-- MoonBit OSC2026 官方网站与官方仓库，用于理解比赛要求、材料形态和验收口径。
-- 常见数据质量工具的通用设计思路，如契约、规则校验、质量报告、数据画像等概念。
+These references inform interfaces and delivery practices; they are not copied into the implementation.
 
-这些参考仅用于确定问题域和交付边界，不包含直接复制的核心实现代码。
+## Third-party assets
 
-## 第三方资源
+- The proposal PDF uses the system font `SimHei` for local rendering only.
+- The project is distributed under Apache-2.0; see `LICENSE` and `NOTICE`.
 
-- 字体：PDF 生成使用系统字体 `SimHei`，仅作为本地导出显示支持。
-- 许可证：项目采用 Apache-2.0 开源许可证。
+## AI and review boundary
 
-## AI 使用边界
-
-本仓库允许使用 AI 进行文本润色、结构梳理与开发辅助，但提交内容仍需由仓库维护者自行审阅、验证和负责。
-
-为避免来源不明内容混入，本仓库要求：
-
-- 所有代码与文档改动必须进入 Git 版本历史。
-- 所有公开交付物必须可由本仓库中的源码、脚本或文档解释其来源。
-- 不引入未经核验的闭源代码、商业代码或不明许可证代码。
+AI tools may assist with drafting, refactoring, and test planning, but every submitted implementation and document is reviewed, formatted, compiled, and tested by the repository maintainer. No private, closed-source, commercial, or unclear-origin code is included.

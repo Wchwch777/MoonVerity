@@ -7,9 +7,21 @@ import {
 }
 
 // Values
+pub fn contract_field_names(Contract) -> Array[String]
+
+pub fn contract_rule_names(Contract) -> Array[String]
+
+pub fn contract_stats(Contract) -> ContractStats
+
 pub fn diff_contracts(Contract, Contract) -> ContractDiff
 
 pub fn field_spec(String, kind? : FieldType, required? : Bool, nullable? : Bool, allowed_values? : Array[String], min_int? : Int, max_int? : Int, pattern? : String, description? : String) -> FieldSpec
+
+pub fn has_field(Contract, String) -> Bool
+
+pub fn inspect_contract(Contract) -> Array[ContractIssue]
+
+pub fn normalize_contract(Contract) -> Contract
 
 pub fn parse_contract_json(String) -> Contract
 
@@ -17,7 +29,13 @@ pub fn profile_rows(Array[Map[String, String]]) -> DatasetProfile
 
 pub fn row_of(Array[(String, String)]) -> Map[String, String]
 
+pub fn rule_summaries(ValidationReport) -> Array[RuleSummary]
+
+pub fn summarize_report(ValidationReport) -> ValidationSummary
+
 pub fn validate_rows(Contract, Array[Map[String, String]]) -> ValidationReport
+
+pub fn validate_rows_with_schema(Contract, Array[Map[String, String]]) -> ValidationReport
 
 // Errors
 
@@ -27,6 +45,9 @@ pub(all) struct ColumnProfile {
   non_empty_count : Int
   empty_count : Int
   distinct_values : Array[String]
+  min_length : Int
+  max_length : Int
+  total_length : Int
 } derive(Eq, @debug.Debug)
 
 pub(all) enum ComparisonOp {
@@ -50,6 +71,23 @@ pub(all) struct ContractDiff {
   added_fields : Array[String]
   removed_fields : Array[String]
   changed_fields : Array[String]
+  added_rules : Array[String]
+  removed_rules : Array[String]
+  changed_rules : Array[String]
+} derive(Eq, @debug.Debug)
+
+pub(all) struct ContractIssue {
+  code : String
+  message : String
+} derive(Eq, @debug.Debug)
+
+pub(all) struct ContractStats {
+  field_count : Int
+  required_field_count : Int
+  typed_field_count : Int
+  rule_count : Int
+  error_rule_count : Int
+  warning_rule_count : Int
 } derive(Eq, @debug.Debug)
 
 pub(all) struct DatasetProfile {
@@ -85,6 +123,9 @@ pub(all) enum Rule {
   IntRange(field~ : String, min~ : Int, max~ : Int, severity~ : Severity, message~ : String)
   CompareInts(left~ : String, op~ : ComparisonOp, right~ : String, severity~ : Severity, message~ : String)
   PatternMatch(field~ : String, pattern~ : String, severity~ : Severity, message~ : String)
+  StringLength(field~ : String, min~ : Int, max~ : Int, severity~ : Severity, message~ : String)
+  DistinctCount(field~ : String, min~ : Int, max~ : Int, severity~ : Severity, message~ : String)
+  RequiredIf(condition_field~ : String, condition_value~ : String, field~ : String, severity~ : Severity, message~ : String)
   RowCount(min~ : Int?, max~ : Int?, severity~ : Severity, message~ : String)
 } derive(Eq, @debug.Debug)
 
@@ -96,6 +137,13 @@ pub(all) struct RuleResult {
   passed : Bool
   failure_rows : Array[Int]
   message : String
+} derive(Eq, @debug.Debug)
+
+pub(all) struct RuleSummary {
+  name : String
+  severity : Severity
+  passed : Bool
+  failure_count : Int
 } derive(Eq, @debug.Debug)
 
 pub(all) enum Severity {
@@ -110,6 +158,14 @@ pub(all) struct ValidationReport {
   failure_count : Int
   warning_count : Int
   rule_results : Array[RuleResult]
+} derive(Eq, @debug.Debug)
+
+pub(all) struct ValidationSummary {
+  status : String
+  error_rule_count : Int
+  warning_rule_count : Int
+  failed_rule_count : Int
+  affected_rows : Array[Int]
 } derive(Eq, @debug.Debug)
 
 // Type aliases

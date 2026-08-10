@@ -1,4 +1,4 @@
-name: publish-package
+name: Publish Mooncakes package
 
 on:
   workflow_dispatch:
@@ -9,26 +9,30 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout complete history
+        uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           persist-credentials: false
 
-      - name: install-ubuntu
+      - name: Install MoonBit
         run: |
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
-          echo "$HOME/.moon/bin" >> $GITHUB_PATH
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
 
-      - name: post install
+      - name: Prepublish verification
         run: |
           moon version --all
           moon update
-
-      - name: prepublish check
-        run: |
+          moon fmt --check
           moon check --deny-warn --target all
-          moon test --deny-warn
+          moon build --deny-warn --target all
+          moon test --deny-warn --target wasm-gc
+          moon info
+          git diff --exit-code
+          python scripts/check_repo_compliance.py --skip-remote-sync
 
-      - name: publish
+      - name: Publish
         env:
           SECRET: ${{ secrets.MOONCAKES_PUBLISH_TOKEN }}
         shell: bash
@@ -37,6 +41,7 @@ jobs:
             echo "Error: MOONCAKES_PUBLISH_TOKEN secret is not set."
             exit 1
           fi
-          echo "$SECRET" > ~/.moon/credentials.json
+          mkdir -p "$HOME/.moon"
+          printf '%s' "$SECRET" > "$HOME/.moon/credentials.json"
           moon publish
-          rm ~/.moon/credentials.json
+          rm -f "$HOME/.moon/credentials.json"

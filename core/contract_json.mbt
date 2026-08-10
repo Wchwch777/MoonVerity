@@ -32,6 +32,10 @@ struct RuleConfig {
   op : String?
   right : String?
   pattern : String?
+  min_length : Int?
+  max_length : Int?
+  condition_field : String?
+  condition_value : String?
   severity : String?
   message : String?
 } derive(FromJson, Debug)
@@ -115,6 +119,30 @@ fn rule_config_to_rule(config : RuleConfig) -> Rule {
       PatternMatch(
         field=expect_string(config.field, "field"),
         pattern=expect_string(config.pattern, "pattern"),
+        severity~,
+        message~,
+      )
+    "string_length" =>
+      StringLength(
+        field=expect_string(config.field, "field"),
+        min=expect_int(config.min_length, "min_length"),
+        max=expect_int(config.max_length, "max_length"),
+        severity~,
+        message~,
+      )
+    "distinct_count" =>
+      DistinctCount(
+        field=expect_string(config.field, "field"),
+        min=expect_int(config.min, "min"),
+        max=expect_int(config.max, "max"),
+        severity~,
+        message~,
+      )
+    "required_if" =>
+      RequiredIf(
+        condition_field=expect_string(config.condition_field, "condition_field"),
+        condition_value=expect_string(config.condition_value, "condition_value"),
+        field=expect_string(config.field, "field"),
         severity~,
         message~,
       )

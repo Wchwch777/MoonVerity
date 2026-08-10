@@ -1,22 +1,52 @@
-# 验收清单
+# OSC2026 验收自查清单
 
-- [x] MoonBit 为主要实现语言
-- [x] 公开仓库结构清晰
-- [x] README 完整可审查
-- [x] 示例数据与契约已提供
-- [x] 核心测试覆盖契约解析、校验、适配器、CLI
-- [x] 命令行入口已提供
-- [x] `moon publish --dry-run`
-- [x] GitHub / GitLink 双远端同步
-- [x] Mooncakes 发布
-- [x] 一页 PDF 项目申报书导出
+## 代码与工具链
 
-## 本地验证命令
+- [x] MoonBit 为主要实现语言，源码按 `core` / `adapters` / `cli` / `cmd` 分包
+- [x] 使用 `moon.mod`、`moon.pkg` 新格式，入口包使用 `pkgtype(kind: "executable")`
+- [x] 空 Map 已统一为 `Map([])`，可通过 MoonBit 0.10.x 的 warning 82 检查
+- [x] `validate_rows` 保持显式规则兼容；`validate_rows_with_schema` 执行字段契约
+- [x] Error 与 Warning 分离统计，负数/零值跨字段比较不会漏报
+- [x] 校验失败 CLI 返回 1，成功或仅 Warning 返回 0
+- [x] CSV 引号、逗号、转义双引号、CRLF、缺失单元格有边界测试
+- [x] JSONL null、布尔、负数、嵌套对象有边界测试
+- [x] 当前有效 MoonBit 源码规模超过 3,000 行，测试覆盖核心、适配器、CLI 和入口
+
+## 仓库与发布
+
+- [x] GitHub 和 GitLink 为公开仓库
+- [x] 两个远程均使用 `master` 默认分支
+- [x] README、README.mbt.md、LICENSE、NOTICE、来源说明、申报 PDF 齐全
+- [x] 提交历史保留公开开发过程，且只保留真实贡献者
+- [x] `.gitignore` 排除 `_build`、`.mooncakes` 和本地工作树
+- [x] `moon.mod` 声明 readme、repository、license、version、description
+- [ ] GitHub/GitLink 已接收本轮最终提交（推送后复核远程 hash）
+- [ ] Mooncakes 已通过 dry-run 并完成最终发布（发布后补录版本和链接）
+
+## CI
+
+- [x] GitHub Actions 使用 `fetch-depth: 0` 拉取完整历史
+- [x] Linux/macOS/Windows 均有 MoonBit 安装步骤
+- [x] Linux/macOS/Windows 均有 native 构建所需 C/OpenSSL 依赖步骤
+- [x] CI 显式运行 `moon fmt --check`
+- [x] CI 显式运行 `moon check --deny-warn --target all`
+- [x] CI 显式运行 `moon build --deny-warn --target all`
+- [x] CI 运行 `moon info` 并以 `git diff --exit-code` 检查生成接口无漂移
+- [x] CI 运行 wasm-gc/native 测试与覆盖率摘要
+- [x] CI 执行仓库合规脚本
+
+## 重现命令
 
 ```bash
-moon check --warn-list +73
-moon test
-moon run cmd/main validate examples/retail-orders/contract.json examples/retail-orders/orders.csv
-moon run cmd/main profile examples/retail-orders/orders.csv
-moon run cmd/main diff-contract examples/retail-orders/contract.json examples/retail-orders/contract_v1_1.json
+moon fmt --check
+moon check --deny-warn --target all
+moon build --deny-warn --target all
+moon test --deny-warn --target wasm-gc
+moon info
+git diff --exit-code
+```
+
+```powershell
+powershell -File scripts/verify_cli_exit.ps1
+powershell -File scripts/verify_acceptance.ps1 -SkipRepoSyncCheck
 ```

@@ -13,3 +13,16 @@ test "profile command renders column summary" {
   assert_true(output.contains("column: status"))
   assert_true(output.contains("distinct: 2"))
 }
+
+///|
+test "profile command renders machine-readable metrics" {
+  let data =
+    #|id,status
+    #|1,paid
+    #|2,shipped
+  let output = run_profile_json(data, "csv")
+
+  assert_true(output.contains("\"row_count\": 2"))
+  assert_true(output.contains("\"min_length\": 4"))
+  assert_true(output.contains("\"max_length\": 7"))
+}

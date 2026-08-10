@@ -1,13 +1,28 @@
 ///|
+pub(all) struct ValidationOutcome {
+  output : String
+  passed : Bool
+} derive(Eq, Debug)
+
+///|
+pub fn validate_text(
+  contract_text : String,
+  data_text : String,
+  data_format : String,
+) -> ValidationOutcome {
+  let contract = @core.parse_contract_json(contract_text)
+  let rows = parse_rows(data_text, data_format)
+  let report = @core.validate_rows_with_schema(contract, rows)
+  { output: format_validation_report(report), passed: report.passed }
+}
+
+///|
 pub fn run_validate_text(
   contract_text : String,
   data_text : String,
   data_format : String,
 ) -> String {
-  let contract = @core.parse_contract_json(contract_text)
-  let rows = parse_rows(data_text, data_format)
-  let report = @core.validate_rows(contract, rows)
-  format_validation_report(report)
+  validate_text(contract_text, data_text, data_format).output
 }
 
 ///|
@@ -15,6 +30,29 @@ pub fn run_profile_text(data_text : String, data_format : String) -> String {
   let rows = parse_rows(data_text, data_format)
   let profile = @core.profile_rows(rows)
   format_profile(profile)
+}
+
+///|
+pub fn run_profile_json(data_text : String, data_format : String) -> String {
+  let rows = parse_rows(data_text, data_format)
+  let profile = @core.profile_rows(rows)
+  let columns = profile.columns.map(fn(column) {
+    Json::object({
+      "name": Json::string(column.name),
+      "non_empty_count": Json::number(column.non_empty_count.to_double()),
+      "empty_count": Json::number(column.empty_count.to_double()),
+      "distinct_values": Json::array(
+        column.distinct_values.map(fn(value) { Json::string(value) }),
+      ),
+      "min_length": Json::number(column.min_length.to_double()),
+      "max_length": Json::number(column.max_length.to_double()),
+      "total_length": Json::number(column.total_length.to_double()),
+    })
+  })
+  Json::object({
+    "row_count": Json::number(profile.row_count.to_double()),
+    "columns": Json::array(columns),
+  }).stringify(indent=2)
 }
 
 ///|
@@ -29,15 +67,83 @@ pub fn run_diff_contract_text(
 }
 
 ///|
+pub fn run_diff_contract_json(
+  before_text : String,
+  after_text : String,
+) -> String {
+  let before = @core.parse_contract_json(before_text)
+  let after = @core.parse_contract_json(after_text)
+  let diff = @core.diff_contracts(before, after)
+  Json::object({
+    "added_fields": Json::array(
+      diff.added_fields.map(fn(name) { Json::string(name) }),
+    ),
+    "removed_fields": Json::array(
+      diff.removed_fields.map(fn(name) { Json::string(name) }),
+    ),
+    "changed_fields": Json::array(
+      diff.changed_fields.map(fn(name) { Json::string(name) }),
+    ),
+    "added_rules": Json::array(
+      diff.added_rules.map(fn(name) { Json::string(name) }),
+    ),
+    "removed_rules": Json::array(
+      diff.removed_rules.map(fn(name) { Json::string(name) }),
+    ),
+    "changed_rules": Json::array(
+      diff.changed_rules.map(fn(name) { Json::string(name) }),
+    ),
+  }).stringify(indent=2)
+}
+
+///|
 pub fn run_validate_json(
   contract_text : String,
   data_text : String,
   data_format : String,
 ) -> String {
+  validate_json(contract_text, data_text, data_format).output
+}
+
+///|
+pub fn validate_json(
+  contract_text : String,
+  data_text : String,
+  data_format : String,
+) -> ValidationOutcome {
   let contract = @core.parse_contract_json(contract_text)
   let rows = parse_rows(data_text, data_format)
-  let report = @core.validate_rows(contract, rows)
-  validation_report_json(report)
+  let report = @core.validate_rows_with_schema(contract, rows)
+  { output: validation_report_json(report), passed: report.passed }
+}
+
+///|
+pub fn run_contract_check_text(contract_text : String) -> ValidationOutcome {
+  let contract = @core.parse_contract_json(contract_text)
+  let issues = @core.inspect_contract(contract)
+  {
+    output: format_contract_issues(contract, issues),
+    passed: issues.is_empty(),
+  }
+}
+
+///|
+pub fn run_contract_check_json(contract_text : String) -> ValidationOutcome {
+  let contract = @core.parse_contract_json(contract_text)
+  let issues = @core.inspect_contract(contract)
+  let issue_json = issues.map(fn(issue) {
+    Json::object({
+      "code": Json::string(issue.code),
+      "message": Json::string(issue.message),
+    })
+  })
+  {
+    output: Json::object({
+      "passed": Json::boolean(issues.is_empty()),
+      "issues": Json::array(issue_json),
+    }).stringify(indent=2),
+    passed: issues.is_empty(),
+  }
 }
 
 ///|
@@ -62,10 +168,31 @@ fn format_validation_report(report : @core.ValidationReport) -> String {
     "warnings: \{report.warning_count}",
   ]
   for result in report.rule_results {
-    let status = if result.passed { "ok" } else { "fail" }
+    let status = if result.passed {
+      "ok"
+    } else if result.severity == @core.Warning {
+      "warn"
+    } else {
+      "fail"
+    }
     lines.push(
       "[\{status}] \{result.name} rows=\{result.failure_rows.length()} message=\{result.message}",
     )
+  }
+  lines.join("\n")
+}
+
+///|
+fn format_contract_issues(
+  contract : @core.Contract,
+  issues : Array[@core.ContractIssue],
+) -> String {
+  let lines = [
+    "contract: \{contract.name} version=\{contract.version}",
+    "passed: \{issues.is_empty()}",
+  ]
+  for issue in issues {
+    lines.push("[\{issue.code}] \{issue.message}")
   }
   lines.join("\n")
 }
@@ -76,6 +203,9 @@ fn format_profile(profile : @core.DatasetProfile) -> String {
   for column in profile.columns {
     lines.push(
       "column: \{column.name} non_empty: \{column.non_empty_count} empty: \{column.empty_count} distinct: \{column.distinct_values.length()}",
+    )
+    lines.push(
+      "  length: min=\{column.min_length} max=\{column.max_length} total=\{column.total_length}",
     )
   }
   lines.join("\n")
@@ -102,7 +232,19 @@ fn format_contract_diff(diff : @core.ContractDiff) -> String {
     "added fields: \{added}",
     "removed fields: \{removed}",
     "changed fields: \{changed}",
+    "added rules: \{format_names(diff.added_rules)}",
+    "removed rules: \{format_names(diff.removed_rules)}",
+    "changed rules: \{format_names(diff.changed_rules)}",
   ].join("\n")
+}
+
+///|
+fn format_names(names : Array[String]) -> String {
+  if names.is_empty() {
+    "-"
+  } else {
+    names.join(", ")
+  }
 }
 
 ///|

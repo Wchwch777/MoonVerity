@@ -29,9 +29,18 @@ fn parse_csv_line(line : String) -> Array[String] {
   let cells = []
   let mut current = ""
   let mut in_quotes = false
-  for ch in line {
-    if ch == '"' {
-      in_quotes = !in_quotes
+  let mut skip_next = false
+  let chars = line.to_array()
+  for index, ch in chars {
+    if skip_next {
+      skip_next = false
+    } else if ch == '"' {
+      if in_quotes && index + 1 < chars.length() && chars[index + 1] == '"' {
+        current = current + "\""
+        skip_next = true
+      } else {
+        in_quotes = !in_quotes
+      }
     } else if ch == ',' && !in_quotes {
       cells.push(current)
       current = ""
@@ -48,7 +57,7 @@ fn row_from_headers(
   headers : Array[String],
   cells : Array[String],
 ) -> Map[String, String] {
-  let row : Map[String, String] = {}
+  let row : Map[String, String] = Map([])
   for index, header in headers {
     row[header] = if index < cells.length() { cells[index] } else { "" }
   }

@@ -11,9 +11,8 @@ pub fn validate_rows(
     let failure_rows = evaluate_rule(rule, rows)
     let passed = failure_rows.is_empty()
     if !passed {
-      failure_count += failure_rows.length()
       if severity_of(rule) == Error {
-        ()
+        failure_count += failure_rows.length()
       } else {
         warning_count += failure_rows.length()
       }
@@ -51,13 +50,19 @@ fn evaluate_rule(rule : Rule, rows : Array[DataRow]) -> Array[Int] {
       evaluate_compare_ints(left, op, right, rows)
     PatternMatch(field~, pattern~, ..) =>
       evaluate_pattern_match(field, pattern, rows)
+    StringLength(field~, min~, max~, ..) =>
+      evaluate_string_length(field, min, max, rows)
+    DistinctCount(field~, min~, max~, ..) =>
+      evaluate_distinct_count(field, min, max, rows)
+    RequiredIf(condition_field~, condition_value~, field~, ..) =>
+      evaluate_required_if(condition_field, condition_value, field, rows)
     RowCount(min~, max~, ..) => evaluate_row_count(rows.length(), min, max)
   }
 }
 
 ///|
 fn evaluate_unique(fields : Array[String], rows : Array[DataRow]) -> Array[Int] {
-  let seen : Map[String, Int] = {}
+  let seen : Map[String, Int] = Map([])
   let failures = []
   for index, row in rows {
     let key = fields.map(fn(name) { option_or_empty(row.get(name)) }).join("||")
@@ -144,10 +149,7 @@ fn evaluate_compare_ints(
   let failures = []
   for index, row in rows {
     match (parse_int_option(row.get(left)), parse_int_option(row.get(right))) {
-      (Some(l), Some(r)) =>
-        if l > 0 && r >= 0 && !compare_ints(l, op, r) {
-          failures.push(index)
-        }
+      (Some(l), Some(r)) => if !compare_ints(l, op, r) { failures.push(index) }
       _ => failures.push(index)
     }
   }
@@ -181,6 +183,62 @@ fn evaluate_pattern_match(
   for index, row in rows {
     let value = option_or_empty(row.get(field))
     if value != "" && !match_pattern(value, pattern) {
+      failures.push(index)
+    }
+  }
+  failures
+}
+
+///|
+fn evaluate_string_length(
+  field : String,
+  min : Int,
+  max : Int,
+  rows : Array[DataRow],
+) -> Array[Int] {
+  let failures = []
+  for index, row in rows {
+    let length = option_or_empty(row.get(field)).trim().to_owned().length()
+    if length < min || length > max {
+      failures.push(index)
+    }
+  }
+  failures
+}
+
+///|
+fn evaluate_distinct_count(
+  field : String,
+  min : Int,
+  max : Int,
+  rows : Array[DataRow],
+) -> Array[Int] {
+  let values = Map([])
+  for row in rows {
+    let value = option_or_empty(row.get(field)).trim().to_owned()
+    if value != "" {
+      values[value] = ()
+    }
+  }
+  if values.length() < min || values.length() > max {
+    [0]
+  } else {
+    []
+  }
+}
+
+///|
+fn evaluate_required_if(
+  condition_field : String,
+  condition_value : String,
+  field : String,
+  rows : Array[DataRow],
+) -> Array[Int] {
+  let failures = []
+  for index, row in rows {
+    let condition = option_or_empty(row.get(condition_field)).trim().to_owned()
+    let value = option_or_empty(row.get(field)).trim().to_owned()
+    if condition == condition_value && value == "" {
       failures.push(index)
     }
   }

@@ -26,7 +26,7 @@ fn parse_jsonl_row(line : String) -> Map[String, String] {
   let object : Map[String, Json] = @json.from_json(parsed) catch {
     _ => abort("jsonl line must be an object")
   }
-  let row : Map[String, String] = {}
+  let row : Map[String, String] = Map([])
   for key, value in object {
     row[key] = json_value_to_cell(value)
   }
@@ -35,17 +35,21 @@ fn parse_jsonl_row(line : String) -> Map[String, String] {
 
 ///|
 fn json_value_to_cell(value : Json) -> String {
-  match json_as_string(value) {
-    Some(text) => text
-    None =>
-      match json_as_int(value) {
-        Some(number) => "\{number}"
-        None =>
-          match json_as_bool(value) {
-            Some(flag) => "\{flag}"
-            None => value.stringify()
-          }
-      }
+  if value == Json::null() {
+    ""
+  } else {
+    match json_as_string(value) {
+      Some(text) => text
+      None =>
+        match json_as_int(value) {
+          Some(number) => "\{number}"
+          None =>
+            match json_as_bool(value) {
+              Some(flag) => "\{flag}"
+              None => value.stringify()
+            }
+        }
+    }
   }
 }
 

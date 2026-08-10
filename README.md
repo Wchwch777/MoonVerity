@@ -1,33 +1,65 @@
 # MoonVerity
 
-MoonVerity 是一个基于 MoonBit 的数据契约与数据质量闸门工具包，聚焦 CSV / JSONL 记录型数据的契约定义、规则校验、数据画像与 CLI 质检流程。
+MoonVerity 是一个纯 MoonBit 数据契约与数据质量闸门工具包，面向 CSV / JSONL 记录型数据，提供契约解析、字段 schema 校验、质量规则、数据画像、契约 diff 和可脚本化 CLI。
 
-## 核心能力
+## 能力概览
 
-- JSON 契约解析
-- CSV / JSONL 输入适配
-- 唯一性、完整性、枚举、范围、跨字段比较等规则校验
-- 文本 / JSON 报告输出
-- `validate`、`profile`、`diff-contract` 三个命令
+- 字段类型、必填/可空、整数范围、日期、布尔值、枚举和 pattern 的 schema 校验
+- `Unique`、`Completeness`、`Enum`、`IntRange`、`CompareInts`、`PatternMatch`、`StringLength`、`DistinctCount`、`RequiredIf`、`RowCount` 规则
+- Warning 与 Error 分离统计；仅 Warning 不会让质量闸门失败
+- CSV 引号/逗号/转义双引号处理，JSONL primitive/null/嵌套值归一化
+- 文本和 JSON 报告、profile 指标、规则级 contract diff、contract 配置检查
+- 可复用的行标准化、列投影、CSV/JSONL round-trip API
 
 ## 快速开始
 
 ```bash
-moon check --warn-list +73
-moon test
-moon run cmd/main validate examples/retail-orders/contract.json examples/retail-orders/orders.csv
+# MoonBit 0.10.x
+moon fmt --check
+moon check --deny-warn --target all
+moon build --deny-warn --target all
+moon test --deny-warn --target wasm-gc
+
+# 成功路径：退出码 0
+moon run cmd/main validate examples/retail-orders/contract.json examples/retail-orders/orders-valid.csv
+
+# 失败路径：退出码 1；报告仍会打印具体行号和规则
+moon run cmd/main validate examples/retail-orders/contract.json examples/retail-orders/orders-invalid.csv
 ```
 
-## 仓库与文档
+## CLI
+
+```text
+validate <contract.json> <data.csv|data.jsonl> [--json]
+profile <data.csv|data.jsonl> [--json]
+diff-contract <before.json> <after.json> [--json]
+check-contract <contract.json> [--json]
+```
+
+`validate` 默认执行字段 schema 与显式规则；Warning 以 `[warn]` 展示，存在 Error 时返回 1。`check-contract` 用于在 CI 或发布前发现重复字段、非法范围和不完整规则配置。
+
+## MoonBit API
+
+根包 `Wchwch777/moonverity` re-export 了 core、adapters 和 cli 的稳定入口，包括：
+
+- `validate_rows`：保持兼容的显式规则校验
+- `validate_rows_with_schema`：字段 schema + 显式规则校验
+- `inspect_contract`、`normalize_contract`、`contract_stats`
+- `profile_rows`、`diff_contracts`、`summarize_report`
+- `parse_csv_text`、`parse_jsonl_text`、`normalize_rows`、`project_rows`
+
+## 仓库与参赛材料
 
 - GitHub: <https://github.com/Wchwch777/MoonVerity>
 - GitLink: <https://gitlink.org.cn/Wchwch/moonverity>
-- 详细说明：[`README.mbt.md`](README.mbt.md)
+- 详细 API 和示例：[`README.mbt.md`](README.mbt.md)
+- 架构：[`docs/architecture.md`](docs/architecture.md)
+- 验收清单：[`docs/acceptance-checklist.md`](docs/acceptance-checklist.md)
 - 一页申报书：[`docs/competition/MoonVerity-proposal.pdf`](docs/competition/MoonVerity-proposal.pdf)
 
-## 参赛交付对齐
+## 工程与发布
 
-- 公开 README、源码、测试、CI、许可证、提交记录
-- MoonBit 为主要实现语言
-- 提供示例数据、示例命令和比赛申报材料
-- 已发布至 mooncakes.io
+- Apache-2.0，见 [`LICENSE`](LICENSE) 与 [`NOTICE`](NOTICE)
+- 三平台 GitHub Actions：Linux / macOS / Windows，完整历史、格式、check、build、test、info 和合规检查
+- `moon.mod` 已声明 Mooncakes 元数据；发布前运行 `moon publish --dry-run`
+- 本地验收：`powershell -File scripts/verify_acceptance.ps1 -SkipRepoSyncCheck`

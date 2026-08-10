@@ -14,4 +14,15 @@ test "profile rows summarizes completeness and enum cardinality" {
   assert_eq(profile.columns[1].name, "status")
   assert_eq(profile.columns[1].non_empty_count, 3)
   assert_eq(profile.columns[1].distinct_values.length(), 2)
+  assert_eq(profile.columns[1].min_length, 4)
+  assert_eq(profile.columns[1].max_length, 7)
+  assert_eq(profile.columns[1].total_length, 15)
+}
+
+///|
+test "profile empty dataset has no columns" {
+  let profile = profile_rows([])
+
+  assert_eq(profile.row_count, 0)
+  assert_true(profile.columns.is_empty())
 }

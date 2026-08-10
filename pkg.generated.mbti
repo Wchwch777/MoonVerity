@@ -2,13 +2,28 @@
 package "Wchwch777/moonverity"
 
 import {
+  "Wchwch777/moonverity/cli",
   "Wchwch777/moonverity/core",
 }
 
 // Values
+pub fn contract_field_names(@core.Contract) -> Array[String]
+
+pub fn contract_rule_names(@core.Contract) -> Array[String]
+
+pub fn contract_stats(@core.Contract) -> @core.ContractStats
+
 pub fn diff_contracts(@core.Contract, @core.Contract) -> @core.ContractDiff
 
 pub fn field_spec(String, kind? : @core.FieldType, required? : Bool, nullable? : Bool, allowed_values? : Array[String], min_int? : Int, max_int? : Int, pattern? : String, description? : String) -> @core.FieldSpec
+
+pub fn has_field(@core.Contract, String) -> Bool
+
+pub fn inspect_contract(@core.Contract) -> Array[@core.ContractIssue]
+
+pub fn normalize_contract(@core.Contract) -> @core.Contract
+
+pub fn normalize_rows(Array[Map[String, String]]) -> Array[Map[String, String]]
 
 pub fn parse_contract_json(String) -> @core.Contract
 
@@ -18,13 +33,29 @@ pub fn parse_jsonl_text(String) -> Array[Map[String, String]]
 
 pub fn profile_rows(Array[Map[String, String]]) -> @core.DatasetProfile
 
+pub fn project_rows(Array[Map[String, String]], Array[String]) -> Array[Map[String, String]]
+
 pub fn read_csv_file(String) -> Array[Map[String, String]]
 
 pub fn read_jsonl_file(String) -> Array[Map[String, String]]
 
+pub fn render_csv(Array[Map[String, String]], Array[String]) -> String
+
+pub fn render_jsonl(Array[Map[String, String]]) -> String
+
 pub fn row_of(Array[(String, String)]) -> Map[String, String]
 
+pub fn rule_summaries(@core.ValidationReport) -> Array[@core.RuleSummary]
+
+pub fn run_contract_check_json(String) -> @cli.ValidationOutcome
+
+pub fn run_contract_check_text(String) -> @cli.ValidationOutcome
+
+pub fn run_diff_contract_json(String, String) -> String
+
 pub fn run_diff_contract_text(String, String) -> String
+
+pub fn run_profile_json(String, String) -> String
 
 pub fn run_profile_text(String, String) -> String
 
@@ -32,7 +63,15 @@ pub fn run_validate_json(String, String, String) -> String
 
 pub fn run_validate_text(String, String, String) -> String
 
+pub fn summarize_report(@core.ValidationReport) -> @core.ValidationSummary
+
+pub fn validate_json(String, String, String) -> @cli.ValidationOutcome
+
 pub fn validate_rows(@core.Contract, Array[Map[String, String]]) -> @core.ValidationReport
+
+pub fn validate_rows_with_schema(@core.Contract, Array[Map[String, String]]) -> @core.ValidationReport
+
+pub fn validate_text(String, String, String) -> @cli.ValidationOutcome
 
 // Errors
 
@@ -47,6 +86,10 @@ pub using @core {type Contract}
 
 pub using @core {type ContractDiff}
 
+pub using @core {type ContractIssue}
+
+pub using @core {type ContractStats}
+
 pub using @core {type DatasetProfile}
 
 pub using @core {type FieldSpec}
@@ -57,9 +100,15 @@ pub using @core {type Rule}
 
 pub using @core {type RuleResult}
 
+pub using @core {type RuleSummary}
+
 pub using @core {type Severity}
 
+pub using @cli {type ValidationOutcome}
+
 pub using @core {type ValidationReport}
+
+pub using @core {type ValidationSummary}
 
 // Traits
 

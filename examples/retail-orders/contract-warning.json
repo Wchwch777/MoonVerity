@@ -1,0 +1,13 @@
+{
+  "name": "retail_orders_warning",
+  "version": "1.0.0",
+  "fields": [],
+  "rules": [
+    {
+      "kind": "row_count",
+      "min": 4,
+      "severity": "warning",
+      "message": "four rows are recommended"
+    }
+  ]
+}

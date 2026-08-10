@@ -1,39 +1,38 @@
-# OSC2026 官方要求对照
+# OSC2026 官方要求与本仓库对照
 
-本文根据 2026-07-07 拉取的官方仓库源码整理，主要依据如下：
+本文件用于验收复核，不替代赛事公告。赛事时间、表单和材料要求具有时效性，最终以官方页面和组委会通知为准。
 
-- 官方仓库：<https://github.com/moonbitlang/OSC2026>
-- 官方源码：<https://github.com/moonbitlang/OSC2026/blob/main/main/main.mbt>
+## 核对来源
 
-## 当前确认到的官方要求
+- 官方赛事仓库：<https://github.com/moonbitlang/OSC2026>
+- 官方网站源码：<https://github.com/moonbitlang/OSC2026/blob/main/main/main.mbt>
+- 赛事页面：<https://moonbitlang.github.io/OSC2026/>
+- GitLink 赛道页面：<https://www.gitlink.org.cn/competitions/track1_2026MoonBit>
+- MoonBit 社区 workflow 模板：<https://github.com/moonbit-community/.github/tree/main/workflow-templates>
 
-根据 `main/main.mbt` 当前文案，官方明确提到：
+## 当前可确认的质量要求
 
-- 项目申报需提交在线仓库链接和一页左右 PDF 申报书。
-- 围绕公开仓库持续开发，保持提交记录、工单、合并请求和更新日志可追踪。
-- 验收项目需以 MoonBit 为主要实现语言。
-- 仓库需要公开可访问，并提供清晰 README、可运行示例、CI、测试和 `mooncakes.io` 发布。
-- 公开材料需包含 README、源码、提交记录和许可证。
-- 原创、移植或参考已有开源项目都可以，但移植项目必须说明原项目、链接、许可证和移植范围。
-- 项目必须采用 OSI 认可的开源许可证，不得提交未经授权的私有代码、闭源代码、商业代码或来源不明的生成内容。
+官方页面强调以下可验收特征：
 
-## MoonVerity 对照结果
+- 项目边界清楚、真实可用、文档完整、测试可运行、长期可维护
+- 项目应围绕公开仓库持续开发，提交记录、工单、合并请求和更新日志可追踪
+- MoonBit 应为主要实现语言；项目需使用 OSI 认可的开源许可证
+- 不应包含未经授权的私有、闭源、商业或来源不明的生成内容
+- 官方首页源码给出的有效 MoonBit 代码参考区间为 4–10k 行，质量、边界和可维护性优先
+- 基础支持在页面中展示为 150 元启动支持 + 350 元完成支持；奖励另行评选
 
-| 官方要求 | 当前状态 | 说明 |
-| --- | --- | --- |
-| 公开仓库 | 已满足 | GitHub 与 GitLink 双仓库公开。 |
-| 在线仓库链接 | 已满足 | 申报书与 README 中均已写入。 |
-| 一页 PDF 申报书 | 已满足 | `docs/competition/MoonVerity-proposal.pdf`。 |
-| 清晰 README | 已满足 | `README.md` 与 `README.mbt.md` 可直接审查。 |
-| 可运行示例 | 已满足 | `examples/retail-orders/` 与 CLI 命令可运行。 |
-| CI | 已满足 | GitHub Actions 持续集成已配置。 |
-| 测试 | 已满足 | `moon test` 通过。 |
-| OSI 许可证 | 已满足 | 使用 Apache-2.0。 |
-| 来源说明 | 待补强 | 需补充原创边界、参考资料与第三方素材来源说明。 |
-| 公开开发痕迹 | 待补强 | 需增加更充分的提交历史与开发文档。 |
-| Mooncakes 发布 | 未执行 | 按当前仓库策略仅保留发布准备，不自动发布。 |
+## 本轮组委会反馈映射
 
-## 备注
+| 反馈 | 本仓库修复 |
+| --- | --- |
+| 三平台 CI 拉取完整历史并显式构建 | `ci.yml` 使用 `fetch-depth: 0`，安装平台依赖，运行 `moon build --deny-warn --target all` |
+| 补齐 MoonBit 工具链安装 | Linux/macOS 使用 unix 安装脚本，Windows 使用 PowerShell 脚本，并在 Windows 配置 MSYS2 UCRT64 |
+| 演示预期与真实输出一致 | `orders-valid.csv` 明确成功路径，`orders-invalid.csv` 明确失败路径，runbook 标注退出码 |
+| 校验失败仍返回 0 | `cmd/main` 根据 `ValidationOutcome.passed` 调用 `@sys.exit(1)` |
+| Warning 被计为失败 | `failure_count` 只累计 Error，Warning 只累计 `warning_count` 并输出 `[warn]` |
+| 负数跨字段比较漏报 | 移除不合理的 `left > 0` / `right >= 0` 前置条件，增加负数、零值和所有操作符测试 |
+| 增加入口及边界测试 | CLI contract check、CLI exit smoke、CSV/JSONL、schema、规则、profile、diff 边界测试 |
 
-- 由于当前仓库明确不自动执行 Mooncakes 发布，因此这项只能做到“发布准备完备”，不能声称已经满足。
-- 本文仅记录 2026-07-07 当天核对到的官方要求；若官方后续调整页面文案，应重新核对。
+## 时间信息
+
+官方源码会随赛事进程更新；历史快照曾展示申报、验收、评选和线下展示阶段，组委会本轮通知要求项目持续更新至 8 月 17 日。提交前应再次核对官方页面和邮件通知，不将本文件中的时间视为永久规则。

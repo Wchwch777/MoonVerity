@@ -72,6 +72,27 @@ pub(all) enum Rule {
     severity~ : Severity,
     message~ : String
   )
+  StringLength(
+    field~ : String,
+    min~ : Int,
+    max~ : Int,
+    severity~ : Severity,
+    message~ : String
+  )
+  DistinctCount(
+    field~ : String,
+    min~ : Int,
+    max~ : Int,
+    severity~ : Severity,
+    message~ : String
+  )
+  RequiredIf(
+    condition_field~ : String,
+    condition_value~ : String,
+    field~ : String,
+    severity~ : Severity,
+    message~ : String
+  )
   RowCount(min~ : Int?, max~ : Int?, severity~ : Severity, message~ : String)
 } derive(Eq, Debug)
 
@@ -108,6 +129,9 @@ pub(all) struct ColumnProfile {
   non_empty_count : Int
   empty_count : Int
   distinct_values : Array[String]
+  min_length : Int
+  max_length : Int
+  total_length : Int
 } derive(Eq, Debug)
 
 ///|
@@ -121,4 +145,7 @@ pub(all) struct ContractDiff {
   added_fields : Array[String]
   removed_fields : Array[String]
   changed_fields : Array[String]
+  added_rules : Array[String]
+  removed_rules : Array[String]
+  changed_rules : Array[String]
 } derive(Eq, Debug)

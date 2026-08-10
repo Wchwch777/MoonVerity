@@ -1,25 +1,40 @@
-# MoonVerity 架构说明
+# MoonVerity Architecture
 
-## 分层
+MoonVerity keeps parsing, contract semantics, presentation, and process control separate so the same behavior can be reused from MoonBit code, tests, CI, and the CLI.
+
+## Packages
 
 1. `core`
-   负责契约模型、规则执行、校验报告、数据画像和契约 diff。
+   - owns `Contract`, `FieldSpec`, `Rule`, reports, profiles, summaries, and contract diff
+   - evaluates explicit rules and opt-in executable field schemas
+   - validates contract configuration before a release or pipeline run
+   - provides normalization and complexity statistics for tooling
 2. `adapters`
-   负责把 CSV / JSONL 统一转换为 `Map[String, String]` 行记录。
+   - parses CSV and JSONL into `Map[String, String]` rows
+   - normalizes null/primitive values consistently
+   - provides deterministic column projection and CSV/JSONL serialization
 3. `cli`
-   负责把核心能力组织成便于终端输出和测试的命令接口。
+   - turns core results into text or JSON
+   - exposes pure `ValidationOutcome` values so process exits can be tested separately
 4. `cmd/main`
-   负责读取参数、读取文件、决定输出格式并调用 CLI 层。
+   - reads arguments and files
+   - prints exactly one report
+   - exits 1 only when an Error-level contract check or validation fails
 
-## 设计取舍
+## Validation flow
 
-- V1 不直接连接数据库和远程服务，先把本地文件校验做好。
-- V1 契约文件固定为 JSON，降低 DSL 解析和维护成本。
-- 明确把命令行逻辑从核心能力里剥离，保证测试覆盖到真实输出行为。
+```text
+contract.json ──parse──> Contract ──inspect/normalize──> executable contract
+data.csv/jsonl ──parse──> rows ──schema + rules──> ValidationReport
+ValidationReport ──summarize/render──> text or JSON ──main──> exit 0/1
+```
 
-## 扩展方向
+`validate_rows` remains the compatibility API for explicit rules. `validate_rows_with_schema` adds field declarations to the report. Warning failures increase `warning_count` and appear as `[warn]`, but only Error failures increase `failure_count` and make the report fail.
 
-- 增加更多规则类型，如正则、日期范围、组合依赖约束。
-- 增加更多输入源，如 TSV、Parquet 或数据库导出文件。
-- 增加 HTML 报告或静态检查页面。
-- 增加更细粒度的机器可读报告结果。
+## Design choices
+
+- JSON is the contract interchange format to keep the input surface small and reviewable.
+- Rows use strings at the adapter boundary; typed interpretation is explicit in `core` so CSV and JSONL behave consistently.
+- All public records are owned by `core` and re-exported by the root package; helper implementations remain package-local.
+- Generated `.mbti` files are checked by `moon info` and committed when public interfaces change.
+- Platform-specific native dependencies are handled in CI rather than hidden in the MoonBit package API.

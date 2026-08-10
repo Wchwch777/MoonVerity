@@ -1,27 +1,37 @@
 # Contributing
 
-## 开发约定
+## Development loop
 
-- 优先保持 MoonBit 代码、测试和文档同步更新。
-- 功能改动应同时补充测试或示例。
-- 对外行为变更应在 `CHANGELOG.md` 中记录。
-- 提交前至少运行：
+Keep MoonBit source, tests, documentation, and examples in sync. New behavior should include a focused test and, when it changes a public interface, a reviewed `pkg.generated.mbti` update.
+
+Run the local gate before opening a change:
 
 ```bash
-moon check --warn-list +73
-moon test
+moon fmt --check
+moon check --deny-warn --target wasm-gc
+moon build --deny-warn --target wasm-gc
+moon test --deny-warn --target wasm-gc
+moon info
+git diff --exit-code
+python scripts/verify_cli_exit.py
 ```
 
-## 提交建议
+Use `moon fmt` after edits and prefer package-local, focused files separated by `///|` blocks.
 
-- `feat:` 新功能或新能力
-- `fix:` 缺陷修复
-- `docs:` 文档或比赛材料修订
-- `ci:` CI 与自动化流程调整
-- `chore:` 仓库维护、脚本、自查工具
+## Commit style
 
-## 比赛仓库维护说明
+- `feat:` new capability
+- `fix:` behavior or bug correction
+- `test:` regression or boundary coverage
+- `docs:` documentation or competition material
+- `ci:` automation and workflow changes
+- `chore:` repository maintenance and self-check tooling
 
-- 本仓库默认同时维护 GitHub 与 GitLink 两个远端。
-- Mooncakes 发布默认不自动执行，需由仓库维护者手动确认。
-- 若参考或移植外部项目，必须同步更新 `docs/source-attribution.md`。
+Keep commits small enough that the public history explains the development path.
+
+## Competition repository maintenance
+
+- Keep the GitHub and GitLink tips synchronized on `master`.
+- Do not commit credentials, build artifacts, `.mooncakes`, or `_build` output.
+- Update `docs/source-attribution.md` when adding an external reference or asset.
+- Run `moon publish --dry-run` before any authorized Mooncakes release; publishing remains a deliberate manual action.

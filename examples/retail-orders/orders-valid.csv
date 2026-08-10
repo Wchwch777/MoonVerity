@@ -1,0 +1,4 @@
+order_id,customer_id,status,amount,discount
+ORD-001,C001,paid,199,10
+ORD-002,C002,shipped,88,8
+ORD-003,C003,cancelled,120,0

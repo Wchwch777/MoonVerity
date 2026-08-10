@@ -1,26 +1,21 @@
-# 提交状态说明
+# MoonVerity 提交状态
 
-更新日期：2026-07-07
+更新时间：2026-08-10
 
-## 已满足
+## 已完成
 
-- 公开 GitHub 仓库
-- 公开 GitLink 仓库
-- 一页 PDF 项目申报书
-- 清晰 README
-- MoonBit 主体实现
-- 可运行示例
-- CI
-- 测试
-- OSI 认可许可证
-- 来源说明
-- 10 次以上有效提交
+- GitHub：<https://github.com/Wchwch777/MoonVerity>
+- GitLink：<https://gitlink.org.cn/Wchwch/moonverity>
+- 公开 README、Apache-2.0 LICENSE、NOTICE、来源说明和一页 PDF 申报书
+- MoonBit 0.10.x 新格式、schema 校验、质量规则、profile、contract diff 和 CLI 入口
+- 失败/Warning/负数比较语义修复及 44+ 个自动化测试
+- 三平台 CI、完整历史 checkout、显式 build、Moon info 漂移检查
+- 本地 CLI 负路径和仓库合规脚本
 
-## 待手动执行
+## 发布前最后一步
 
-无（已全部完成）
+1. 在有授权凭据的环境执行 `moon publish --dry-run`。
+2. 确认 dry-run、完整本地验证和远程同步均为 0 退出码后执行 `moon publish`。
+3. 将最终 GitHub/GitLink commit hash、Mooncakes 版本和发布链接补录到本文件。
 
-## 说明
-
-当前仓库已成功将包发布至 mooncakes.io。
-已在本地和 GitHub / GitLink 双远端同步并验证通过。
+本文件不预先声称 Mooncakes 发布成功；发布状态以实际命令输出和公开包页面为准。

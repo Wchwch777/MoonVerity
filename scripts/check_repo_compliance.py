@@ -16,6 +16,9 @@ REQUIRED_FILES = [
     ROOT / "docs" / "competition" / "MoonVerity-proposal.pdf",
     ROOT / "docs" / "competition" / "official-requirements.md",
     ROOT / "docs" / "source-attribution.md",
+    ROOT / ".github" / "workflows" / "ci.yml",
+    ROOT / ".github" / "workflows" / "publish.yml",
+    ROOT / "scripts" / "verify_cli_exit.py",
 ]
 
 
@@ -55,9 +58,46 @@ def count_moonbit_lines() -> tuple[int, list[str]]:
             continue
         total += len(path.read_text(encoding="utf-8").splitlines())
     issues: list[str] = []
-    if total < 500:
-        issues.append(f"MoonBit source scale too small: {total} < 500 lines")
+    if total < 3000:
+        issues.append(f"MoonBit source scale too small: {total} < 3000 lines")
     return total, issues
+
+
+def check_ci_workflow() -> list[str]:
+    workflow = (ROOT / ".github" / "workflows" / "ci.yml").read_text(
+        encoding="utf-8"
+    )
+    required_markers = {
+        "fetch-depth: 0": "full history checkout",
+        "ubuntu-latest": "Linux matrix",
+        "macos-latest": "macOS matrix",
+        "windows-latest": "Windows matrix",
+        "moon fmt --check": "format check",
+        "moon check --deny-warn --target all": "all-target check",
+        "moon build --deny-warn --target all": "all-target build",
+        "moon info": "public interface generation",
+        "moon test --deny-warn --target native": "native test",
+    }
+    return [
+        f"CI missing {label}: {marker}"
+        for marker, label in required_markers.items()
+        if marker not in workflow
+    ]
+
+
+def check_moon_metadata() -> list[str]:
+    metadata = (ROOT / "moon.mod").read_text(encoding="utf-8")
+    required_markers = [
+        'readme = "README.mbt.md"',
+        'repository = "https://github.com/Wchwch777/MoonVerity"',
+        'license = "Apache-2.0"',
+        'version = "0.1.0"',
+    ]
+    return [
+        f"moon.mod missing publication metadata: {marker}"
+        for marker in required_markers
+        if marker not in metadata
+    ]
 
 
 def check_default_branch(remote: str) -> tuple[str, list[str]]:
@@ -101,6 +141,8 @@ def main() -> int:
     issues: list[str] = []
 
     issues.extend(check_required_files())
+    issues.extend(check_ci_workflow())
+    issues.extend(check_moon_metadata())
     commit_count, commit_issues = count_commits()
     issues.extend(commit_issues)
     source_lines, line_issues = count_moonbit_lines()

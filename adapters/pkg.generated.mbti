@@ -2,13 +2,23 @@
 package "Wchwch777/moonverity/adapters"
 
 // Values
+pub fn normalize_rows(Array[Map[String, String]]) -> Array[Map[String, String]]
+
 pub fn parse_csv_text(String) -> Array[Map[String, String]]
 
 pub fn parse_jsonl_text(String) -> Array[Map[String, String]]
 
+pub fn project_rows(Array[Map[String, String]], Array[String]) -> Array[Map[String, String]]
+
 pub fn read_csv_file(String) -> Array[Map[String, String]]
 
 pub fn read_jsonl_file(String) -> Array[Map[String, String]]
+
+pub fn render_csv(Array[Map[String, String]], Array[String]) -> String
+
+pub fn render_jsonl(Array[Map[String, String]]) -> String
+
+pub fn row_columns(Array[Map[String, String]]) -> Array[String]
 
 // Errors
 

@@ -1,8 +1,20 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "Wchwch777/moonverity/cli"
 
+import {
+  "moonbitlang/core/debug",
+}
+
 // Values
+pub fn run_contract_check_json(String) -> ValidationOutcome
+
+pub fn run_contract_check_text(String) -> ValidationOutcome
+
+pub fn run_diff_contract_json(String, String) -> String
+
 pub fn run_diff_contract_text(String, String) -> String
+
+pub fn run_profile_json(String, String) -> String
 
 pub fn run_profile_text(String, String) -> String
 
@@ -10,9 +22,17 @@ pub fn run_validate_json(String, String, String) -> String
 
 pub fn run_validate_text(String, String, String) -> String
 
+pub fn validate_json(String, String, String) -> ValidationOutcome
+
+pub fn validate_text(String, String, String) -> ValidationOutcome
+
 // Errors
 
 // Types and methods
+pub(all) struct ValidationOutcome {
+  output : String
+  passed : Bool
+} derive(Eq, @debug.Debug)
 
 // Type aliases
 

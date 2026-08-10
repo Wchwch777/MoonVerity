@@ -1,69 +1,57 @@
 # MoonVerity
 
-MoonVerity 是一个基于 MoonBit 的数据契约与数据质量闸门工具包，面向 CSV / JSONL 这类记录型数据，提供契约解析、规则校验、数据画像和命令行检查能力。
+MoonVerity is a MoonBit-native data contract and data quality gate toolkit for CSV and JSONL datasets. It combines executable field schemas, explicit quality rules, profile metrics, contract diffs, and CI-friendly command exits.
 
-MoonVerity is a MoonBit-native data contract and data quality gate toolkit for CSV and JSONL datasets.
-
-## 项目定位
-
-- 面向 MoonBit 生态的可复用工程基础设施
-- 采用“核心库 + CLI + 示例数据 + 文档 + CI”的完整交付形态
-- 适合作为 MoonBit OSC2026 参赛项目的公开仓库样例
-
-## 当前能力
-
-- 契约 JSON 解析
-- 规则校验：唯一性、完整性、枚举、整数范围、跨字段比较、行数约束
-- 数据画像：非空统计、空值统计、去重值计数
-- 输入适配：CSV / JSONL
-- CLI：`validate`、`profile`、`diff-contract`
-
-## 仓库链接
-
-- GitHub: <https://github.com/Wchwch777/MoonVerity>
-- GitLink: <https://gitlink.org.cn/Wchwch/moonverity>
-
-## 快速开始
-
-```bash
-moon check --warn-list +73
-moon test
-moon run cmd/main validate examples/retail-orders/contract.json examples/retail-orders/orders.csv
-moon run cmd/main profile examples/retail-orders/orders.csv
-moon run cmd/main diff-contract examples/retail-orders/contract.json examples/retail-orders/contract_v1_1.json
-```
-
-## 示例
+## Example API
 
 ```mbt nocheck
-import "Wchwch777/moonverity"
+import {
+  "Wchwch777/moonverity",
+}
 
 let contract = @moonverity.parse_contract_json(contract_text)
 let rows = @moonverity.parse_csv_text(csv_text)
-let report = @moonverity.validate_rows(contract, rows)
+let report = @moonverity.validate_rows_with_schema(contract, rows)
+let summary = @moonverity.summarize_report(report)
 ```
 
-## 仓库结构
+`validate_rows` remains available for callers that only want explicit rules. `validate_rows_with_schema` additionally checks required/nullable fields, Int/Bool/Date values, bounds, allowed values, and declared patterns.
 
-- `core/`：契约模型、规则执行器、画像和契约 diff
-- `adapters/`：CSV / JSONL 输入适配
-- `cli/`：可测试命令层
-- `cmd/main/`：命令行入口
-- `examples/retail-orders/`：电商订单示例契约和数据
-- `docs/`：架构说明、合规说明、验收清单、比赛材料
-- `assets/logo/`：项目标识
-- `scripts/`：PDF 生成、仓库自查与验收脚本
+## Commands
 
-## 合规状态
+```bash
+moon fmt --check
+moon check --deny-warn --target all
+moon build --deny-warn --target all
+moon test --deny-warn --target wasm-gc
 
-- MoonBit 为主要实现语言
-- 仓库公开可访问
-- 提供 README、测试、CI、示例数据和一页 PDF 申报书
-- Mooncakes 发布暂未执行；当前仓库仅保留发布准备，不自动发布
+moon run cmd/main validate examples/retail-orders/contract.json examples/retail-orders/orders-valid.csv
+moon run cmd/main profile examples/retail-orders/orders-valid.csv --json
+moon run cmd/main diff-contract examples/retail-orders/contract.json examples/retail-orders/contract_v1_1.json --json
+moon run cmd/main check-contract examples/retail-orders/contract.json
+```
 
-## 相关文档
+The invalid fixture intentionally exits with status 1:
 
-- [架构说明](docs/architecture.md)
-- [验收清单](docs/acceptance-checklist.md)
-- [官方要求对照](docs/competition/official-requirements.md)
-- [来源说明](docs/source-attribution.md)
+```bash
+moon run cmd/main validate examples/retail-orders/contract.json examples/retail-orders/orders-invalid.csv
+```
+
+## Packages
+
+- `core/`: contract model, schema validation, quality rules, profiles, analysis, normalization, and contract diff
+- `adapters/`: CSV/JSONL parsing, row normalization, projection, and serialization
+- `cli/`: pure command behavior and text/JSON renderers
+- `cmd/main/`: process entry point and truthful exit codes
+- `examples/retail-orders/`: valid and invalid fixtures
+- `docs/`: architecture, competition requirements, runbook, and acceptance material
+- `scripts/`: repository compliance, CLI exit, acceptance, and proposal helpers
+
+## Open-source delivery
+
+- Apache-2.0 license
+- Three-platform CI with full-history checkout and explicit MoonBit build
+- Generated public interfaces checked by `moon info` and `git diff --exit-code`
+- Mooncakes metadata declared in `moon.mod`; publish with `moon publish --dry-run` before the authorized release command
+
+See [the architecture](docs/architecture.md), [acceptance checklist](docs/acceptance-checklist.md), [official requirements](docs/competition/official-requirements.md), and [source attribution](docs/source-attribution.md).

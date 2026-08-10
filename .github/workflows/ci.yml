@@ -1,4 +1,4 @@
-name: ci
+name: Check and Test
 
 on:
   push:
@@ -6,8 +6,8 @@ on:
   pull_request:
 
 jobs:
-  test:
-    name: Test (${{ matrix.os }})
+  check:
+    name: Check (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -19,46 +19,77 @@ jobs:
         shell: bash
 
     steps:
-      - name: Checkout code
+      - name: Checkout complete history
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
 
-      - name: Setup Moon env (Linux & macOS)
-        if: matrix.os != 'windows-latest'
+      - name: Install MoonBit and native dependencies (Linux)
+        if: runner.os == 'Linux'
         run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc libssl-dev
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
 
-      - name: Setup Moon env (Windows)
-        if: matrix.os == 'windows-latest'
+      - name: Install MoonBit and native dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install gcc openssl
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: Install MoonBit (Windows)
+        if: runner.os == 'Windows'
         shell: pwsh
         run: |
           Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
           irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
-          echo "C:\Users\runneradmin\.moon\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
+          "C:\Users\runneradmin\.moon\bin" | Out-File -FilePath $env:GITHUB_PATH -Append
 
-      - name: Post Install
+      - name: Install MSYS2 native dependencies (Windows)
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-openssl
+
+      - name: Post-install verification
         run: |
           moon version --all
           moon update
 
-      - name: Moon Check
+      - name: Format check
+        run: moon fmt --check
+
+      - name: Type check all targets
+        run: moon check --deny-warn --target all
+
+      - name: Build all targets
+        run: moon build --deny-warn --target all
+
+      - name: Generate and verify public interfaces
         run: |
-          moon fmt --check
-          moon check --deny-warn --target all
           moon info
           git diff --exit-code
 
-      - name: Moon Test (wasm-gc)
+      - name: Test wasm-gc with coverage
         run: |
-          moon test --deny-warn --enable-coverage
+          moon test --deny-warn --target wasm-gc --enable-coverage
           moon coverage report -f summary
           moon coverage analyze
 
-      - name: Moon Test (native)
+      - name: Test native with coverage
         run: |
           moon test --deny-warn --target native --enable-coverage
           moon coverage report -f summary
           moon coverage analyze
 
-      - name: Verify repository compliance
-        run: python scripts/check_repo_compliance.py --skip-remote-sync
+      - name: Verify CLI exits and repository compliance
+        run: |
+          python scripts/verify_cli_exit.py
+          python scripts/check_repo_compliance.py --skip-remote-sync
