@@ -22,14 +22,23 @@ Step "MoonBit format" {
 
 Step "MoonBit check" {
   moon check --deny-warn --target wasm-gc
+  if ($LASTEXITCODE -ne 0) {
+    throw "MoonBit check failed with exit code $LASTEXITCODE"
+  }
 }
 
 Step "MoonBit build" {
   moon build --deny-warn --target wasm-gc
+  if ($LASTEXITCODE -ne 0) {
+    throw "MoonBit build failed with exit code $LASTEXITCODE"
+  }
 }
 
 Step "MoonBit test" {
   moon test --deny-warn --target wasm-gc
+  if ($LASTEXITCODE -ne 0) {
+    throw "MoonBit test failed with exit code $LASTEXITCODE"
+  }
 }
 
 Step "CLI exit behavior" {
@@ -48,7 +57,13 @@ Step "Realistic benchmark fixtures" {
 
 Step "Generated interfaces" {
   moon info
+  if ($LASTEXITCODE -ne 0) {
+    throw "MoonBit info failed with exit code $LASTEXITCODE"
+  }
   git diff --exit-code
+  if ($LASTEXITCODE -ne 0) {
+    throw "Generated interfaces changed"
+  }
 }
 
 Step "Proposal PDF exists" {
