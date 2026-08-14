@@ -21,6 +21,8 @@ moon check --deny-warn --target all
 moon build --deny-warn --target all
 moon test --deny-warn --target wasm-gc
 
+本地验收基线为 MoonBit 0.10.3；CI 使用官方安装器当前可获取的稳定工具链，并在安装后打印实际版本。项目源码已按 0.10.3 语法和 `--deny-warn` 规则验证。
+
 # 成功路径：退出码 0
 moon run cmd/main validate examples/retail-orders/contract.json examples/retail-orders/orders-valid.csv
 
