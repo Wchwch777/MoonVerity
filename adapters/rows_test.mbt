@@ -4,8 +4,8 @@ test "normalize rows trims column names and values" {
     Map::from_array([(" id ", " 1 "), ("status", " paid ")]),
   ])
 
-  assert_eq(rows[0].get("id"), Some("1"))
-  assert_eq(rows[0].get("status"), Some("paid"))
+  assert_true(rows[0].get("id") == Some("1"))
+  assert_true(rows[0].get("status") == Some("paid"))
   assert_true(rows[0].get(" id ") is None)
 }
 
@@ -16,7 +16,7 @@ test "project rows fills missing columns deterministically" {
     ["status", "amount", "id"],
   )
 
-  assert_eq(rows[0].keys().to_array(), ["status", "amount", "id"])
+  assert_true(rows[0].keys().to_array() == ["status", "amount", "id"])
   assert_eq(rows[0]["status"], "paid")
   assert_eq(rows[0]["amount"], "")
   assert_eq(rows[0]["id"], "1")

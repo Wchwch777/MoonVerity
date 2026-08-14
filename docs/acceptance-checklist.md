@@ -3,8 +3,8 @@
 ## 代码与工具链
 
 - [x] MoonBit 为主要实现语言，源码按 `core` / `adapters` / `cli` / `cmd` 分包
-- [x] 使用 `moon.mod`、`moon.pkg` 新格式，入口包使用 `pkgtype(kind: "executable")`
-- [x] 空 Map 已统一为 `Map([])`，可通过 MoonBit 0.10.x 的 warning 82 检查
+- [x] 使用 `moon.mod`、`moon.pkg` 新格式，入口包使用 `options("is-main": true)`
+- [x] 空 Map 已统一为 `Map([])`，可通过 MoonBit 0.10.3 的 warning 82 检查
 - [x] `validate_rows` 保持显式规则兼容；`validate_rows_with_schema` 执行字段契约
 - [x] Error 与 Warning 分离统计，负数/零值跨字段比较不会漏报
 - [x] 校验失败 CLI 返回 1，成功或仅 Warning 返回 0
@@ -50,7 +50,7 @@ git diff --exit-code
 ```
 
 ```powershell
-powershell -File scripts/verify_cli_exit.py
+python scripts/verify_cli_exit.py
 python scripts/verify_benchmark.py
 powershell -File scripts/verify_acceptance.ps1 -SkipRepoSyncCheck
 ```

@@ -31,7 +31,7 @@ test "benchmark suite records expected and actual outcomes" {
 
   assert_eq(suite.case_count, 3)
   assert_true(!suite.passed)
-  assert_eq(suite.failed_cases, ["intentionally-wrong-expectation"])
+  assert_true(suite.failed_cases == ["intentionally-wrong-expectation"])
   assert_true(suite.cases[0].consistent)
   assert_true(suite.cases[1].consistent)
   assert_true(!suite.cases[2].consistent)

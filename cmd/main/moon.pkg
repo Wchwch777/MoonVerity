@@ -6,4 +6,6 @@ import {
   "moonbitlang/x/sys",
 }
 
-pkgtype(kind: "executable")
+options(
+  "is-main": true,
+)

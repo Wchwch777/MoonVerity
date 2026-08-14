@@ -9,6 +9,8 @@ jobs:
   check:
     name: Check (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    env:
+      MOONBIT_INSTALL_VERSION: 0.10.3
     strategy:
       fail-fast: false
       matrix:
@@ -60,7 +62,8 @@ jobs:
 
       - name: Post-install verification
         run: |
-          moon version --all
+          moon version --all 2>&1 | tee moon-version.txt
+          grep -q "moonc v0.10.3" moon-version.txt
           moon update
 
       - name: Format check

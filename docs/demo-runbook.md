@@ -2,7 +2,7 @@
 
 ## 环境准备
 
-建议使用 MoonBit 0.10.x（本地验收使用 `moonc v0.10.4`）：
+建议使用 MoonBit 0.10.3（组委会验收基线）：
 
 ```bash
 moon version --all
@@ -67,7 +67,7 @@ diff 同时列出字段与规则的新增、删除、变更；`check-contract` �
 ## 5. 本地验收脚本
 
 ```powershell
-powershell -File scripts/verify_cli_exit.ps1
+python scripts/verify_cli_exit.py
 powershell -File scripts/verify_acceptance.ps1 -SkipRepoSyncCheck
 python scripts/check_repo_compliance.py --skip-remote-sync
 ```

@@ -15,7 +15,7 @@ MoonVerity 是一个纯 MoonBit 数据契约与数据质量闸门工具包，面
 ## 快速开始
 
 ```bash
-# MoonBit 0.10.x
+# MoonBit 0.10.3
 moon fmt && git diff --exit-code
 moon check --deny-warn --target all
 moon build --deny-warn --target all
