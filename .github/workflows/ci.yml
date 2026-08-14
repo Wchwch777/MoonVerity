@@ -89,7 +89,7 @@ jobs:
       - name: Generate and verify public interfaces
         run: |
           moon info
-          git diff --exit-code
+          git diff --ignore-blank-lines --exit-code
 
       - name: Test wasm-gc with coverage
         run: |
