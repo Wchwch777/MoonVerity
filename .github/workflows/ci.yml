@@ -69,6 +69,10 @@ jobs:
           moon fmt --verbose
           fmt_status=$?
           echo "formatter_exit=$fmt_status"
+          # MoonBit 0.10.7 rewrites the 0.10.3-compatible main-package
+          # declaration to the legacy pkgtype spelling. Keep the source in
+          # the committee-compatible form while checking all other files.
+          git restore -- cmd/main/moon.pkg
           git status --short
           git diff --stat
           if [ "$fmt_status" -ne 0 ]; then
